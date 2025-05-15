@@ -1,0 +1,32 @@
+﻿@model IEnumerable<WorkoutPlan>
+@{
+    ViewData["Title"] = "Assign Workout Plans";
+    Layout = "_AdminLayout";
+}
+
+<h1>Assign Workout Plans</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Plan Name</th>
+            <th>Type</th>
+            <th>Workouts</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var plan in Model)
+        {
+            <tr>
+                <td>@plan.Name</td>
+                <td>@plan.WorkoutPlanType.Name</td>
+                <td>@plan.WorkoutPlanWorkouts.Count</td>
+                <td>
+                    <a asp-action="AssignToUser" asp-route-planId="@plan.Id"
+                       class="btn btn-primary">Assign to User</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

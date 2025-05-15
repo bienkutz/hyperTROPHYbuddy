@@ -1,0 +1,44 @@
+﻿@model Workout
+@{
+    ViewData["Title"] = "Edit Workout";
+    Layout = "_AdminLayout";
+    var exercises = ViewBag.Exercises as MultiSelectList;
+    var selectedExercises = Model.WorkoutExercises?.Select(we => we.ExerciseId).ToList();
+}
+
+<h1>Edit Workout</h1>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Exercises (Select up to 10)</label>
+        <select name="SelectedExerciseIds" class="form-control" multiple
+                asp-items="@exercises">
+            @if (selectedExercises != null)
+            {
+                @foreach (var exerciseId in selectedExercises)
+                {
+                    <option value="@exerciseId" selected>@exercises.FirstOrDefault(e => e.Value == exerciseId.ToString())?.Text</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

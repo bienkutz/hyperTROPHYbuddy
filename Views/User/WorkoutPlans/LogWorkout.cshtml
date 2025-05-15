@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Log Workout";
+    Layout = "_UserLayout";
+}
+
+<h1>Log Workout</h1>
+
+<form asp-action="LogWorkout" method="post">
+    <input type="hidden" name="userWorkoutPlanId" value="@ViewBag.UserWorkoutPlanId" />
+    <input type="hidden" name="workoutId" value="@ViewBag.WorkoutId" />
+
+    <div class="form-group">
+        <label class="control-label">Date</label>
+        <input type="date" name="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <h3>Exercises</h3>
+
+    @foreach (var exercise in ViewBag.Exercises as List<Exercise>)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>@exercise.Name</h5>
+            </div>
+            <div class="card-body">
+                <p>@exercise.Description</p>
+
+                <div class="row">
+                    <div class="col-md-2 font-weight-bold">Set</div>
+                    <div class="col-md-4 font-weight-bold">Reps</div>
+                    <div class="col-md-4 font-weight-bold">Weight (kg)</div>
+                </div>
+
+                @for (int i = 1; i <= 3; i++)
+                {
+                    <div class="row mb-2">
+                        <div class="col-md-2">@i</div>
+                        <div class="col-md-4">
+                            <input type="number" name="exerciseSets[@exercise.Id][@(i-1)].reps" class="form-control" min="1" />
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" step="0.1" name="exerciseSets[@exercise.Id][@(i-1)].weight" class="form-control" min="0" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <input type="submit" value="Save Workout" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to Plans</a>
+</div>
