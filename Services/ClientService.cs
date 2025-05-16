@@ -3,22 +3,22 @@ using hyperTROPHYbuddy.Models;
 using Microsoft.EntityFrameworkCore;
 namespace hyperTROPHYbuddy.Services
 {
-    public class UserService : IUserService
+    public class ClientService : IClientService
     {
         private readonly ApplicationDbContext _context;
 
-        public UserService(ApplicationDbContext context)
+        public ClientService(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<UserWorkoutPlan>> GetUserPlans(string userId)
+        public async Task<IEnumerable<ClientWorkoutPlan>> GetClientPlans(string clientId)
         {
-            return await _context.UserWorkoutPlans
-                .Where(uwp => uwp.UserId == userId)
-                .Include(uwp => uwp.WorkoutPlan)
+            return await _context.ClientWorkoutPlans
+                .Where(cwp => cwp.ClientId == clientId)
+                .Include(cwp => cwp.WorkoutPlan)
                 .ThenInclude(wp => wp.WorkoutPlanType)
-                .Include(uwp => uwp.WorkoutPlan)
+                .Include(cwp => cwp.WorkoutPlan)
                 .ThenInclude(wp => wp.WorkoutPlanWorkouts)
                 .ThenInclude(wpw => wpw.Workout)
                 .ThenInclude(w => w.WorkoutExercises)
@@ -26,34 +26,34 @@ namespace hyperTROPHYbuddy.Services
                 .ToListAsync();
         }
 
-        public async Task<UserWorkoutPlan> GetUserPlanById(int id, string userId)
+        public async Task<ClientWorkoutPlan> GetClientPlanById(int id, string clientId)
         {
-            return await _context.UserWorkoutPlans
-                .Include(uwp => uwp.WorkoutPlan)
+            return await _context.ClientWorkoutPlans
+                .Include(cwp => cwp.WorkoutPlan)
                 .ThenInclude(wp => wp.WorkoutPlanType)
-                .Include(uwp => uwp.WorkoutPlan)
+                .Include(cwp => cwp.WorkoutPlan)
                 .ThenInclude(wp => wp.WorkoutPlanWorkouts)
                 .ThenInclude(wpw => wpw.Workout)
                 .ThenInclude(w => w.WorkoutExercises)
                 .ThenInclude(we => we.Exercise)
-                .FirstOrDefaultAsync(uwp => uwp.Id == id && uwp.UserId == userId);
+                .FirstOrDefaultAsync(cwp => cwp.Id == id && cwp.ClientId == clientId);
         }
 
-        public async Task LogWorkout(int userWorkoutPlanId, int workoutId, string userId, DateTime date, List<SetLog> setLogs)
+        public async Task LogWorkout(int clientWorkoutPlanId, int workoutId, string clientId, DateTime date, List<SetLog> setLogs)
         {
             // Validate the user has access to this plan
-            var userPlan = await _context.UserWorkoutPlans
-                .Include(uwp => uwp.WorkoutPlan)
+            var clientPlan = await _context.ClientWorkoutPlans
+                .Include(cwp => cwp.WorkoutPlan)
                 .ThenInclude(wp => wp.WorkoutPlanWorkouts)
-                .FirstOrDefaultAsync(uwp => uwp.Id == userWorkoutPlanId && uwp.UserId == userId);
+                .FirstOrDefaultAsync(cwp => cwp.Id == clientWorkoutPlanId && cwp.ClientId == clientId);
 
-            if (userPlan == null)
+            if (clientPlan == null)
             {
                 throw new InvalidOperationException("Workout plan not found or doesn't belong to you.");
             }
 
             // Validate the workout is part of the plan
-            if (!userPlan.WorkoutPlan.WorkoutPlanWorkouts.Any(wpw => wpw.WorkoutId == workoutId))
+            if (!clientPlan.WorkoutPlan.WorkoutPlanWorkouts.Any(wpw => wpw.WorkoutId == workoutId))
             {
                 throw new InvalidOperationException("Workout is not part of this plan.");
             }
@@ -76,7 +76,7 @@ namespace hyperTROPHYbuddy.Services
             // Create workout log
             var workoutLog = new WorkoutLog
             {
-                UserWorkoutPlanId = userWorkoutPlanId,
+                ClientWorkoutPlanId = clientWorkoutPlanId,
                 WorkoutId = workoutId,
                 Date = date,
                 SetLogs = setLogs
@@ -86,10 +86,10 @@ namespace hyperTROPHYbuddy.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<WorkoutLog>> GetWorkoutHistory(int userWorkoutPlanId, string userId)
+        public async Task<IEnumerable<WorkoutLog>> GetWorkoutHistory(int clientWorkoutPlanId, string clientId)
         {
             return await _context.WorkoutLogs
-                .Where(wl => wl.UserWorkoutPlanId == userWorkoutPlanId && wl.UserWorkoutPlan.UserId == userId)
+                .Where(wl => wl.ClientWorkoutPlanId == clientWorkoutPlanId && wl.ClientWorkoutPlan.ClientId == clientId)
                 .Include(wl => wl.Workout)
                 .Include(wl => wl.SetLogs)
                 .ThenInclude(sl => sl.Exercise)

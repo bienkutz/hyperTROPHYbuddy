@@ -130,7 +130,7 @@ namespace hyperTROPHYbuddy.Services
             return await _context.WorkoutPlanTypes.ToListAsync();
         }
 
-        public async Task AssignPlanToUser(int planId, string userId, string adminId)
+        public async Task AssignPlanToClient(int planId, string clientId, string adminId)
         {
             // Verify the plan belongs to the admin
             var plan = await GetPlanById(planId, adminId);
@@ -140,8 +140,8 @@ namespace hyperTROPHYbuddy.Services
             }
 
             // Check if the plan is already assigned to this user
-            var existingAssignment = await _context.UserWorkoutPlans
-                .FirstOrDefaultAsync(uwp => uwp.UserId == userId && uwp.WorkoutPlanId == planId);
+            var existingAssignment = await _context.ClientWorkoutPlans
+                .FirstOrDefaultAsync(cwp => cwp.ClientId == clientId && cwp.WorkoutPlanId == planId);
 
             if (existingAssignment != null)
             {
@@ -149,24 +149,24 @@ namespace hyperTROPHYbuddy.Services
             }
 
             // Assign the plan
-            var userWorkoutPlan = new UserWorkoutPlan
+            var clientWorkoutPlan = new ClientWorkoutPlan
             {
-                UserId = userId,
+                ClientId = clientId,
                 WorkoutPlanId = planId,
                 AssignedDate = DateTime.UtcNow
             };
 
-            _context.UserWorkoutPlans.Add(userWorkoutPlan);
+            _context.ClientWorkoutPlans.Add(clientWorkoutPlan);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<UserWorkoutPlan>> GetAssignedPlans(string adminId)
+        public async Task<IEnumerable<ClientWorkoutPlan>> GetAssignedPlans(string adminId)
         {
-            return await _context.UserWorkoutPlans
-                .Include(uwp => uwp.WorkoutPlan)
+            return await _context.ClientWorkoutPlans
+                .Include(cwp => cwp.WorkoutPlan)
                 .ThenInclude(wp => wp.WorkoutPlanType)
                 //.Include(uwp => uwp.User)
-                .Where(uwp => uwp.WorkoutPlan.AdminId == adminId)
+                .Where(cwp => cwp.WorkoutPlan.AdminId == adminId)
                 .ToListAsync();
         }
     }

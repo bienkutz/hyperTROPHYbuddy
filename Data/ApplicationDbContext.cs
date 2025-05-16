@@ -1,9 +1,11 @@
 ﻿using hyperTROPHYbuddy.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace hyperTROPHYbuddy.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -16,12 +18,14 @@ namespace hyperTROPHYbuddy.Data
         public DbSet<WorkoutPlan> WorkoutPlans { get; set; }
         public DbSet<WorkoutPlanType> WorkoutPlanTypes { get; set; }
         public DbSet<WorkoutPlanWorkout> WorkoutPlanWorkouts { get; set; }
-        public DbSet<UserWorkoutPlan> UserWorkoutPlans { get; set; }
+        public DbSet<ClientWorkoutPlan> ClientWorkoutPlans { get; set; }
         public DbSet<WorkoutLog> WorkoutLogs { get; set; }
         public DbSet<SetLog> SetLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // This is crucial for Identity tables
+
             // Configure many-to-many relationships
             modelBuilder.Entity<WorkoutExercise>()
                 .HasKey(we => new { we.WorkoutId, we.ExerciseId });
@@ -31,7 +35,7 @@ namespace hyperTROPHYbuddy.Data
 
             modelBuilder.Entity<SetLog>()
                 .Property(s => s.Weight)
-                .HasColumnType("decimal(5, 2)"); 
+                .HasColumnType("decimal(5, 2)");
 
             // Seed initial workout plan types
             modelBuilder.Entity<WorkoutPlanType>().HasData(

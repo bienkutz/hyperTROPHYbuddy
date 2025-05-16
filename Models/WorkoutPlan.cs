@@ -12,7 +12,7 @@ namespace hyperTROPHYbuddy.Models
         // Navigation properties
         public WorkoutPlanType WorkoutPlanType { get; set; }
         public ICollection<WorkoutPlanWorkout> WorkoutPlanWorkouts { get; set; }
-        public ICollection<UserWorkoutPlan> UserWorkoutPlans { get; set; }
+        public ICollection<ClientWorkoutPlan> ClientWorkoutPlans { get; set; }
 
         // For the binding of the selected workouts in the view
 

@@ -21,7 +21,7 @@ namespace hyperTROPHYbuddy.Controllers.Admin
         }
 
         // GET: Admin/Assign/AssignToUser/5
-        public async Task<IActionResult> AssignToUser(int planId)
+        public async Task<IActionResult> AssignToClient(int planId)
         {
             var adminId = "hardcoded-admin-id";
             var plan = await _planService.GetPlanById(planId, adminId);
@@ -37,7 +37,7 @@ namespace hyperTROPHYbuddy.Controllers.Admin
         // POST: Admin/Assign/AssignToUser/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignToUser(int planId, string userId)
+        public async Task<IActionResult> AssignToClient(int planId, string clientId)
         {
             /*var adminId = "hardcoded-admin-id";
             try

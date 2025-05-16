@@ -1,12 +1,15 @@
-﻿//CURRENTLY NOT USED
-/*
+﻿using Microsoft.AspNetCore.Identity;
+
 namespace hyperTROPHYbuddy.Models
 {
-    public class ApplicationUser
+    public class ApplicationUser : IdentityUser
     {
-        public string Id { get; set; }
-        public string UserName { get; set; }
-        // Add other properties you need
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation properties
+        public virtual ICollection<ClientWorkoutPlan> ClientWorkoutPlans { get; set; }
+
     }
 }
-*/

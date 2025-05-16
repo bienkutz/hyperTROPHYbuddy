@@ -11,7 +11,7 @@ namespace hyperTROPHYbuddy.Services
         Task DeletePlan(int id, string adminId);
         Task<bool> PlanExists(int id, string adminId);
         Task<IEnumerable<WorkoutPlanType>> GetPlanTypes();
-        Task AssignPlanToUser(int planId, string userId, string adminId);
-        Task<IEnumerable<UserWorkoutPlan>> GetAssignedPlans(string adminId);
+        Task AssignPlanToClient(int planId, string clientId, string adminId);
+        Task<IEnumerable<ClientWorkoutPlan>> GetAssignedPlans(string adminId);
     }
 }

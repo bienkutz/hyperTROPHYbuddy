@@ -6,32 +6,32 @@ namespace hyperTROPHYbuddy.Controllers.User
 {
     public class WorkoutPlansController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IClientService _clientService;
 
-        public WorkoutPlansController(IUserService userService)
+        public WorkoutPlansController(IClientService clientService)
         {
-            _userService = userService;
+            _clientService = clientService;
         }
 
         // GET: User/WorkoutPlans
         public async Task<IActionResult> Index()
         {
-            var userId = "hardcoded-user-id"; // Replace with actual user ID later
-            var plans = await _userService.GetUserPlans(userId);
+            var clientId = "hardcoded-user-id"; // Replace with actual user ID later
+            var plans = await _clientService.GetClientPlans(clientId);
             return View(plans);
         }
 
         // GET: User/WorkoutPlans/LogWorkout/5?workoutId=2
-        public async Task<IActionResult> LogWorkout(int userWorkoutPlanId, int workoutId)
+        public async Task<IActionResult> LogWorkout(int clientWorkoutPlanId, int workoutId)
         {
-            var userId = "hardcoded-user-id";
-            var userPlan = await _userService.GetUserPlanById(userWorkoutPlanId, userId);
-            if (userPlan == null)
+            var clientId = "hardcoded-user-id";
+            var clientPlan = await _clientService.GetClientPlanById(clientWorkoutPlanId, clientId);
+            if (clientPlan == null)
             {
                 return NotFound();
             }
 
-            var workout = userPlan.WorkoutPlan.WorkoutPlanWorkouts
+            var workout = clientPlan.WorkoutPlan.WorkoutPlanWorkouts
                 .FirstOrDefault(wpw => wpw.WorkoutId == workoutId)?.Workout;
 
             if (workout == null)
@@ -40,7 +40,7 @@ namespace hyperTROPHYbuddy.Controllers.User
             }
 
             ViewBag.WorkoutId = workoutId;
-            ViewBag.UserWorkoutPlanId = userWorkoutPlanId;
+            ViewBag.ClientWorkoutPlanId = clientWorkoutPlanId;
             ViewBag.Exercises = workout.WorkoutExercises.Select(we => we.Exercise).ToList();
             return View();
         }
@@ -49,12 +49,12 @@ namespace hyperTROPHYbuddy.Controllers.User
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogWorkout(
-            int userWorkoutPlanId,
+            int clientWorkoutPlanId,
             int workoutId,
             DateTime date,
             Dictionary<int, List<(int reps, decimal weight)>> exerciseSets)
         {
-            var userId = "hardcoded-user-id";
+            var clientId = "hardcoded-user-id";
             var setLogs = new List<SetLog>();
 
             foreach (var (exerciseId, sets) in exerciseSets)
@@ -73,21 +73,21 @@ namespace hyperTROPHYbuddy.Controllers.User
 
             try
             {
-                await _userService.LogWorkout(userWorkoutPlanId, workoutId, userId, date, setLogs);
+                await _clientService.LogWorkout(clientWorkoutPlanId, workoutId, clientId, date, setLogs);
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return RedirectToAction(nameof(LogWorkout), new { userWorkoutPlanId, workoutId });
+                return RedirectToAction(nameof(LogWorkout), new { clientWorkoutPlanId, workoutId });
             }
         }
 
         // GET: User/WorkoutPlans/History/5
-        public async Task<IActionResult> History(int userWorkoutPlanId)
+        public async Task<IActionResult> History(int clientWorkoutPlanId)
         {
-            var userId = "hardcoded-user-id";
-            var history = await _userService.GetWorkoutHistory(userWorkoutPlanId, userId);
+            var clientId = "hardcoded-user-id";
+            var history = await _clientService.GetWorkoutHistory(clientWorkoutPlanId, clientId);
             return View(history);
         }
     }
