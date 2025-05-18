@@ -23,8 +23,8 @@
                 <td>@plan.WorkoutPlanType.Name</td>
                 <td>@plan.WorkoutPlanWorkouts.Count</td>
                 <td>
-                    <a asp-action="AssignToUser" asp-route-planId="@plan.Id"
-                       class="btn btn-primary">Assign to User</a>
+                    <a asp-action="AssignToClient" asp-route-planId="@plan.Id"
+                       class="btn btn-primary">Assign to Client</a>
                 </td>
             </tr>
         }

@@ -2,7 +2,7 @@
 using hyperTROPHYbuddy.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace hyperTROPHYbuddy.Controllers.User
+namespace hyperTROPHYbuddy.Controllers.Client
 {
     public class WorkoutPlansController : Controller
     {

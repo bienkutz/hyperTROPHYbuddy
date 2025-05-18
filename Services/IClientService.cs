@@ -8,5 +8,6 @@ namespace hyperTROPHYbuddy.Services
         Task<ClientWorkoutPlan> GetClientPlanById(int id, string clientId);
         Task LogWorkout(int clientWorkoutPlanId, int workoutId, string clientId, DateTime date, List<SetLog> setLogs);
         Task<IEnumerable<WorkoutLog>> GetWorkoutHistory(int clientWorkoutPlanId, string clientId);
+        Task<bool> IsValidClient(string userId);  
     }
 }

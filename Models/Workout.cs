@@ -10,6 +10,7 @@ namespace hyperTROPHYbuddy.Models
         // Navigation properties
         public ICollection<WorkoutExercise> WorkoutExercises { get; set; }
         public ICollection<WorkoutPlanWorkout> WorkoutPlanWorkouts { get; set; }
+        public ApplicationUser Admin { get; set; }
 
         //For the binding of the selected exercises in the view
         [NotMapped]

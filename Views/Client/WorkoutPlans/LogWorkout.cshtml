@@ -1,12 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Log Workout";
-    Layout = "_UserLayout";
+    Layout = "_ClientLayout";
 }
 
 <h1>Log Workout</h1>
 
 <form asp-action="LogWorkout" method="post">
-    <input type="hidden" name="userWorkoutPlanId" value="@ViewBag.ClientWorkoutPlanId" />
+    <input type="hidden" name="clientWorkoutPlanId" value="@ViewBag.ClientWorkoutPlanId" />
     <input type="hidden" name="workoutId" value="@ViewBag.WorkoutId" />
 
     <div class="form-group">

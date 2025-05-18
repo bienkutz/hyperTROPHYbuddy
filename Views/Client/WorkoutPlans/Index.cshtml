@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Your Workout Plans";
-    Layout = "_UserLayout";
+    Layout = "_ClientLayout";
 }
 
 <h1>Your Workout Plans</h1>
@@ -17,18 +17,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var userPlan in Model)
+        @foreach (var clientPlan in Model)
         {
             <tr>
-                <td>@userPlan.WorkoutPlan.Name</td>
-                <td>@userPlan.WorkoutPlan.WorkoutPlanType.Name</td>
-                <td>@userPlan.AssignedDate.ToShortDateString()</td>
+                <td>@clientPlan.WorkoutPlan.Name</td>
+                <td>@clientPlan.WorkoutPlan.WorkoutPlanType.Name</td>
+                <td>@clientPlan.AssignedDate.ToShortDateString()</td>
                 <td>
-                    <a asp-action="History" asp-route-userWorkoutPlanId="@userPlan.Id"
+                    <a asp-action="History" asp-route-clientWorkoutPlanId="@clientPlan.Id"
                        class="btn btn-sm btn-info">View History</a>
                 </td>
             </tr>
-            @foreach (var workout in userPlan.WorkoutPlan.WorkoutPlanWorkouts)
+            @foreach (var workout in clientPlan.WorkoutPlan.WorkoutPlanWorkouts)
             {
                 <tr>
                     <td colspan="3" style="padding-left: 50px;">
@@ -36,7 +36,7 @@
                     </td>
                     <td>
                         <a asp-action="LogWorkout"
-                           asp-route-userWorkoutPlanId="@userPlan.Id"
+                           asp-route-clientWorkoutPlanId="@clientPlan.Id"
                            asp-route-workoutId="@workout.WorkoutId"
                            class="btn btn-sm btn-primary">Log Workout</a>
                     </td>

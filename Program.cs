@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews()
     .AddRazorOptions(options =>
     {
         options.ViewLocationFormats.Add("/Views/Admin/{1}/{0}.cshtml"); // For Admin folder
-        options.ViewLocationFormats.Add("/Views/User/{1}/{0}.cshtml");  // For User folder
+        options.ViewLocationFormats.Add("/Views/Client/{1}/{0}.cshtml");  // For Client folder
     });
 
 // Add DbContext

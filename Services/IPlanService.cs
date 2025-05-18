@@ -4,6 +4,7 @@ namespace hyperTROPHYbuddy.Services
 {
     public interface IPlanService
     {
+        Task<bool> IsUserAdmin(string userId);
         Task<IEnumerable<WorkoutPlan>> GetPlansByAdmin(string adminId);
         Task<WorkoutPlan> GetPlanById(int id, string adminId);
         Task CreatePlan(WorkoutPlan plan, List<int> workoutIds);
