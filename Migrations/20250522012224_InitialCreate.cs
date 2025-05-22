@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace hyperTROPHYbuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class SecondCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,22 +56,6 @@ namespace hyperTROPHYbuddy.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Exercises",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VideoLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdminId = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Exercises", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "WorkoutPlanTypes",
                 columns: table => new
                 {
@@ -82,20 +66,6 @@ namespace hyperTROPHYbuddy.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WorkoutPlanTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Workouts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdminId = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Workouts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,6 +175,48 @@ namespace hyperTROPHYbuddy.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Exercises",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VideoLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exercises", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exercises_AspNetUsers_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Workouts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workouts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Workouts_AspNetUsers_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WorkoutPlans",
                 columns: table => new
                 {
@@ -213,11 +225,17 @@ namespace hyperTROPHYbuddy.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WorkoutPlanTypeId = table.Column<int>(type: "int", nullable: false),
-                    AdminId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WorkoutPlans", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkoutPlans_AspNetUsers_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_WorkoutPlans_WorkoutPlanTypes_WorkoutPlanTypeId",
                         column: x => x.WorkoutPlanTypeId,
@@ -241,7 +259,7 @@ namespace hyperTROPHYbuddy.Migrations
                         column: x => x.ExerciseId,
                         principalTable: "Exercises",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_WorkoutExercises_Workouts_WorkoutId",
                         column: x => x.WorkoutId,
@@ -251,30 +269,30 @@ namespace hyperTROPHYbuddy.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserWorkoutPlans",
+                name: "ClientWorkoutPlans",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     WorkoutPlanId = table.Column<int>(type: "int", nullable: false),
-                    AssignedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    AssignedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserWorkoutPlans", x => x.Id);
+                    table.PrimaryKey("PK_ClientWorkoutPlans", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserWorkoutPlans_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_ClientWorkoutPlans_AspNetUsers_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserWorkoutPlans_WorkoutPlans_WorkoutPlanId",
+                        name: "FK_ClientWorkoutPlans_WorkoutPlans_WorkoutPlanId",
                         column: x => x.WorkoutPlanId,
                         principalTable: "WorkoutPlans",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -298,7 +316,7 @@ namespace hyperTROPHYbuddy.Migrations
                         column: x => x.WorkoutId,
                         principalTable: "Workouts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -307,25 +325,32 @@ namespace hyperTROPHYbuddy.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserWorkoutPlanId = table.Column<int>(type: "int", nullable: false),
+                    ClientWorkoutPlanId = table.Column<int>(type: "int", nullable: false),
                     WorkoutId = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WorkoutLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WorkoutLogs_UserWorkoutPlans_UserWorkoutPlanId",
-                        column: x => x.UserWorkoutPlanId,
-                        principalTable: "UserWorkoutPlans",
+                        name: "FK_WorkoutLogs_AspNetUsers_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WorkoutLogs_ClientWorkoutPlans_ClientWorkoutPlanId",
+                        column: x => x.ClientWorkoutPlanId,
+                        principalTable: "ClientWorkoutPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_WorkoutLogs_Workouts_WorkoutId",
                         column: x => x.WorkoutId,
                         principalTable: "Workouts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -338,17 +363,24 @@ namespace hyperTROPHYbuddy.Migrations
                     ExerciseId = table.Column<int>(type: "int", nullable: false),
                     SetNumber = table.Column<int>(type: "int", nullable: false),
                     Reps = table.Column<int>(type: "int", nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(5,2)", nullable: false)
+                    Weight = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SetLogs", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_SetLogs_AspNetUsers_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_SetLogs_Exercises_ExerciseId",
                         column: x => x.ExerciseId,
                         principalTable: "Exercises",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_SetLogs_WorkoutLogs_WorkoutLogId",
                         column: x => x.WorkoutLogId,
@@ -408,6 +440,26 @@ namespace hyperTROPHYbuddy.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientWorkoutPlans_ClientId",
+                table: "ClientWorkoutPlans",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientWorkoutPlans_WorkoutPlanId",
+                table: "ClientWorkoutPlans",
+                column: "WorkoutPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Exercises_AdminId",
+                table: "Exercises",
+                column: "AdminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SetLogs_ClientId",
+                table: "SetLogs",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SetLogs_ExerciseId",
                 table: "SetLogs",
                 column: "ExerciseId");
@@ -418,29 +470,29 @@ namespace hyperTROPHYbuddy.Migrations
                 column: "WorkoutLogId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserWorkoutPlans_UserId",
-                table: "UserWorkoutPlans",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserWorkoutPlans_WorkoutPlanId",
-                table: "UserWorkoutPlans",
-                column: "WorkoutPlanId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_ExerciseId",
                 table: "WorkoutExercises",
                 column: "ExerciseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkoutLogs_UserWorkoutPlanId",
+                name: "IX_WorkoutLogs_ClientId",
                 table: "WorkoutLogs",
-                column: "UserWorkoutPlanId");
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutLogs_ClientWorkoutPlanId",
+                table: "WorkoutLogs",
+                column: "ClientWorkoutPlanId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkoutLogs_WorkoutId",
                 table: "WorkoutLogs",
                 column: "WorkoutId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutPlans_AdminId",
+                table: "WorkoutPlans",
+                column: "AdminId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkoutPlans_WorkoutPlanTypeId",
@@ -451,6 +503,11 @@ namespace hyperTROPHYbuddy.Migrations
                 name: "IX_WorkoutPlanWorkouts_WorkoutId",
                 table: "WorkoutPlanWorkouts",
                 column: "WorkoutId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Workouts_AdminId",
+                table: "Workouts",
+                column: "AdminId");
         }
 
         /// <inheritdoc />
@@ -490,16 +547,16 @@ namespace hyperTROPHYbuddy.Migrations
                 name: "Exercises");
 
             migrationBuilder.DropTable(
-                name: "UserWorkoutPlans");
+                name: "ClientWorkoutPlans");
 
             migrationBuilder.DropTable(
                 name: "Workouts");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "WorkoutPlans");
 
             migrationBuilder.DropTable(
-                name: "WorkoutPlans");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "WorkoutPlanTypes");

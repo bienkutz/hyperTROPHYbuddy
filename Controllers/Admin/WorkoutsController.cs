@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace hyperTROPHYbuddy.Controllers.Admin
 {
-    public class WorkoutsController : Controller
+    public class WorkoutsController : BaseAdminController
     {
         private readonly IWorkoutService _workoutService;
         private readonly IExerciseService _exerciseService;
@@ -16,93 +16,133 @@ namespace hyperTROPHYbuddy.Controllers.Admin
             _exerciseService = exerciseService;
         }
 
-        // GET: Admin/Workouts
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var adminId = "hardcoded-admin-id";
-            var workouts = await _workoutService.GetWorkoutsByAdmin(adminId);
-            return View(workouts);
+            try
+            {
+                var workouts = string.IsNullOrEmpty(searchTerm)
+                    ? await _workoutService.GetWorkoutsByAdmin(GetAdminId())
+                    : await _workoutService.SearchWorkouts(searchTerm, GetAdminId());
+                return View(workouts);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
         }
 
-        // GET: Admin/Workouts/Create
+        [HttpGet("Create")]
         public async Task<IActionResult> Create()
         {
-            var adminId = "hardcoded-admin-id";
-            var exercises = await _exerciseService.GetExercisesByAdmin(adminId);
+            var exercises = await _exerciseService.GetExercisesByAdmin(GetAdminId());
             ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name");
-            return View();
+            return View(new Workout());
         }
 
-        // POST: Admin/Workouts/Create
-        [HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Workout workout, List<int> SelectedExerciseIds)
+        public async Task<IActionResult> Create(Workout workout, List<int> selectedExerciseIds)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                workout.AdminId = "hardcoded-admin-id";
-                await _workoutService.CreateWorkout(workout, SelectedExerciseIds);
+                var exercises = await _exerciseService.GetExercisesByAdmin(GetAdminId());
+                ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name", selectedExerciseIds);
+                return View(workout);
+            }
+
+            try
+            {
+                await _workoutService.CreateWorkout(workout, selectedExerciseIds, GetAdminId());
+                TempData["Success"] = "Workout created successfully";
                 return RedirectToAction(nameof(Index));
             }
-            return View(workout);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var exercises = await _exerciseService.GetExercisesByAdmin(GetAdminId());
+                ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name", selectedExerciseIds);
+                return View(workout);
+            }
         }
 
-        // GET: Admin/Workouts/Edit/5
+        [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var adminId = "hardcoded-admin-id";
-            var workout = await _workoutService.GetWorkoutById(id, adminId);
-            if (workout == null)
+            try
+            {
+                var workout = await _workoutService.GetWorkoutById(id, GetAdminId());
+                var exercises = await _exerciseService.GetExercisesByAdmin(GetAdminId());
+                var selectedExercises = workout.WorkoutExercises.Select(we => we.ExerciseId).ToList();
+
+                ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name", selectedExercises);
+                return View(workout);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-
-            var exercises = await _exerciseService.GetExercisesByAdmin(adminId);
-            var selectedExercises = workout.WorkoutExercises.Select(we => we.ExerciseId).ToList();
-
-            ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name", selectedExercises);
-            return View(workout);
         }
 
-        // POST: Admin/Workouts/Edit/5
-        [HttpPost]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Workout workout, List<int> SelectedExerciseIds)
+        public async Task<IActionResult> Edit(int id, Workout workout, List<int> selectedExerciseIds)
         {
             if (id != workout.Id)
-            {
                 return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                var exercises = await _exerciseService.GetExercisesByAdmin(GetAdminId());
+                ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name", selectedExerciseIds);
+                return View(workout);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                workout.AdminId = "hardcoded-admin-id";
-                await _workoutService.UpdateWorkout(workout, SelectedExerciseIds);
+                await _workoutService.UpdateWorkout(workout, selectedExerciseIds, GetAdminId());
+                TempData["Success"] = "Workout updated successfully";
                 return RedirectToAction(nameof(Index));
             }
-            return View(workout);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var exercises = await _exerciseService.GetExercisesByAdmin(GetAdminId());
+                ViewBag.Exercises = new MultiSelectList(exercises, "Id", "Name", selectedExerciseIds);
+                return View(workout);
+            }
         }
 
-        // GET: Admin/Workouts/Delete/5
+        [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var adminId = "hardcoded-admin-id";
-            var workout = await _workoutService.GetWorkoutById(id, adminId);
-            if (workout == null)
+            try
+            {
+                var workout = await _workoutService.GetWorkoutById(id, GetAdminId());
+                return View(workout);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-            return View(workout);
         }
 
-        // POST: Admin/Workouts/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var adminId = "hardcoded-admin-id";
-            await _workoutService.DeleteWorkout(id, adminId);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _workoutService.DeleteWorkout(id, GetAdminId());
+                TempData["Success"] = "Workout deleted successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }
+

@@ -2,49 +2,50 @@
 @{
     ViewData["Title"] = "Edit Workout Plan";
     Layout = "_AdminLayout";
-    var workouts = ViewBag.Workouts as MultiSelectList;
-    var selectedWorkouts = Model.WorkoutPlanWorkouts?.Select(wpw => wpw.WorkoutId).ToList();
 }
 
-<h1>Edit Workout Plan</h1>
+<div class="row">
+    <div class="col-md-8">
+        <h1>Edit Workout Plan</h1>
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="WorkoutPlanTypeId" class="control-label"></label>
-        <select asp-for="WorkoutPlanTypeId" class="form-control"
-                asp-items="@(new SelectList(ViewBag.PlanTypes, "Id", "Name"))"></select>
-    </div>
-    <div class="form-group">
-        <label class="control-label">Workouts (Select up to 7)</label>
-        <select name="SelectedWorkoutIds" class="form-control" multiple
-                asp-items="@workouts">
-            @if (selectedWorkouts != null)
-            {
-                @foreach (var workoutId in selectedWorkouts)
-                {
-                    <option value="@workoutId" selected>@workouts.FirstOrDefault(w => w.Value == workoutId.ToString())?.Text</option>
-                }
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
-    </div>
-</form>
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label">Plan Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="WorkoutPlanTypeId" class="form-label">Plan Type</label>
+                <select asp-for="WorkoutPlanTypeId" class="form-select"
+                        asp-items="@(new SelectList(ViewBag.PlanTypes, "Id", "Name"))">
+                    <option value="">Select a type...</option>
+                </select>
+                <span asp-validation-for="WorkoutPlanTypeId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label">Workouts (Select up to 7)</label>
+                <select name="selectedWorkoutIds" class="form-select" multiple size="7"
+                        asp-items="@ViewBag.Workouts"></select>
+                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple workouts</small>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

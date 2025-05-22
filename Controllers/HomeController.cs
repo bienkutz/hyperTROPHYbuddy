@@ -1,56 +1,37 @@
-using System.Diagnostics;
 using hyperTROPHYbuddy.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
-/*namespace hyperTROPHYbuddy.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public HomeController(UserManager<ApplicationUser> userManager)
     {
-        private readonly ILogger<HomeController> _logger;
+        _userManager = userManager;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
+    public async Task<IActionResult> Index()
+    {
+        if (User.Identity.IsAuthenticated)
         {
-            _logger = logger;
-        }
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Exercises", new { area = "Admin" });
+            }
 
-        public IActionResult Index()
-        {
-            return View();
+            if (User.IsInRole("Client"))
+            {
+                return RedirectToAction("Index", "WorkoutPlans", new { area = "Client" });
+            }
         }
+        return View();
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
-*/
-
-namespace hyperTROPHYbuddy.Controllers
-{
-    public class HomeController : Controller
-    {
-        public IActionResult Index()
-        {
-            // Temporary role selection for testing
-            //ViewBag.IsAdmin = true; // Change to false to test user view
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SetRole(bool isAdmin)
-        {
-            // For testing without real auth
-            //HttpContext.Items["IsAdmin"] = isAdmin;
-            return RedirectToAction("Index");
-        }
-    }
-}
-
-

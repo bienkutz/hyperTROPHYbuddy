@@ -1,32 +1,43 @@
-﻿@model IEnumerable<WorkoutPlan>
+﻿@model IEnumerable<ClientWorkoutPlan>
 @{
-    ViewData["Title"] = "Assign Workout Plans";
+    ViewData["Title"] = "Plan Assignments";
     Layout = "_AdminLayout";
 }
 
-<h1>Assign Workout Plans</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Plan Assignments</h1>
+    <a asp-controller="Plans" asp-action="Index" class="btn btn-primary">Manage Plans</a>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Plan Name</th>
-            <th>Type</th>
-            <th>Workouts</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var plan in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@plan.Name</td>
-                <td>@plan.WorkoutPlanType.Name</td>
-                <td>@plan.WorkoutPlanWorkouts.Count</td>
-                <td>
-                    <a asp-action="AssignToClient" asp-route-planId="@plan.Id"
-                       class="btn btn-primary">Assign to Client</a>
-                </td>
+                <th>Client</th>
+                <th>Plan</th>
+                <th>Type</th>
+                <th>Assigned Date</th>
+                <th>Workouts</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var assignment in Model)
+            {
+                <tr>
+                    <td>@assignment.Client.Email</td>
+                    <td>@assignment.WorkoutPlan.Name</td>
+                    <td><span class="badge bg-secondary">@assignment.WorkoutPlan.WorkoutPlanType.Name</span></td>
+                    <td>@assignment.AssignedDate.ToString("MMM dd, yyyy")</td>
+                    <td>@assignment.WorkoutPlan.WorkoutPlanWorkouts.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No plans have been assigned yet. Select a plan to assign it to a client.
+    </div>
+}

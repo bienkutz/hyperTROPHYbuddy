@@ -4,22 +4,37 @@
     Layout = "_AdminLayout";
 }
 
-<h1>Delete Workout Plan</h1>
+<div class="row">
+    <div class="col-md-6">
+        <h1>Delete Workout Plan</h1>
 
-<h3>Are you sure you want to delete this plan?</h3>
-<div>
-    <h4>@Model.Name</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Plan Type</dt>
-        <dd class="col-sm-10">@Model.WorkoutPlanType.Name</dd>
-        <dt class="col-sm-2">Workouts</dt>
-        <dd class="col-sm-10">@Model.WorkoutPlanWorkouts.Count</dd>
-    </dl>
+        <div class="alert alert-danger">
+            <h4>Are you sure you want to delete this workout plan?</h4>
+            <p>This action cannot be undone and will remove all related workout logs.</p>
+        </div>
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">@Model.Name</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Type</dt>
+                    <dd class="col-sm-9">@Model.WorkoutPlanType.Name</dd>
+
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
+
+                    <dt class="col-sm-3">Workouts</dt>
+                    <dd class="col-sm-9">@Model.WorkoutPlanWorkouts.Count</dd>
+                </dl>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Delete Plan</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
 </div>

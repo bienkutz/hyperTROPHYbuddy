@@ -23,6 +23,7 @@ builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IAuthorizationManagerService, AuthorizationManagerService>();
 
 // Add Identity
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -56,7 +57,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "client",
+    pattern: "Client/{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

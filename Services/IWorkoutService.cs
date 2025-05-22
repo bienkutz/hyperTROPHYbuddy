@@ -4,12 +4,13 @@ namespace hyperTROPHYbuddy.Services
 {
     public interface IWorkoutService
     {
-        Task<bool> IsUserAdmin(string userId);
         Task<IEnumerable<Workout>> GetWorkoutsByAdmin(string adminId);
         Task<Workout> GetWorkoutById(int id, string adminId);
-        Task CreateWorkout(Workout workout, List<int> exerciseIds);
-        Task UpdateWorkout(Workout workout, List<int> exerciseIds);
+        Task<Workout> CreateWorkout(Workout workout, List<int> exerciseIds, string adminId);
+        Task UpdateWorkout(Workout workout, List<int> exerciseIds, string adminId);
         Task DeleteWorkout(int id, string adminId);
         Task<bool> WorkoutExists(int id, string adminId);
+        Task<IEnumerable<Workout>> SearchWorkouts(string searchTerm, string adminId);
     }
 }
+

@@ -2,39 +2,36 @@
 @{
     ViewData["Title"] = "Edit Workout";
     Layout = "_AdminLayout";
-    var exercises = ViewBag.Exercises as MultiSelectList;
-    var selectedExercises = Model.WorkoutExercises?.Select(we => we.ExerciseId).ToList();
 }
 
-<h1>Edit Workout</h1>
+<div class="row">
+    <div class="col-md-8">
+        <h1>Edit Workout</h1>
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label class="control-label">Exercises (Select up to 10)</label>
-        <select name="SelectedExerciseIds" class="form-control" multiple
-                asp-items="@exercises">
-            @if (selectedExercises != null)
-            {
-                @foreach (var exerciseId in selectedExercises)
-                {
-                    <option value="@exerciseId" selected>@exercises.FirstOrDefault(e => e.Value == exerciseId.ToString())?.Text</option>
-                }
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
-    </div>
-</form>
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label">Workout Name</label>
+                <input asp-for="Name" class="form-control" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label">Exercises (Select up to 10)</label>
+                <select name="selectedExerciseIds" class="form-select" multiple size="10"
+                        asp-items="@ViewBag.Exercises">
+                </select>
+                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple exercises</small>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

@@ -3,55 +3,94 @@
     Layout = "_ClientLayout";
 }
 
-<h1>Log Workout</h1>
+<div class="row mb-3">
+    <div class="col">
+        <h1>Log Workout: @ViewBag.WorkoutName</h1>
+    </div>
+</div>
 
-<form asp-action="LogWorkout" method="post">
+<form asp-action="LogWorkout" method="post" id="workoutForm">
     <input type="hidden" name="clientWorkoutPlanId" value="@ViewBag.ClientWorkoutPlanId" />
     <input type="hidden" name="workoutId" value="@ViewBag.WorkoutId" />
 
-    <div class="form-group">
-        <label class="control-label">Date</label>
-        <input type="date" name="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+    <div class="form-group mb-4">
+        <label class="form-label">Date</label>
+        <input type="date" name="date" class="form-control" value="@ViewBag.Date.ToString("yyyy-MM-dd")" required />
     </div>
-
-    <h3>Exercises</h3>
 
     @foreach (var exercise in ViewBag.Exercises as List<Exercise>)
     {
-        <div class="card mb-3">
+        <div class="card mb-4">
             <div class="card-header">
-                <h5>@exercise.Name</h5>
+                <h5 class="mb-0">@exercise.Name</h5>
             </div>
             <div class="card-body">
-                <p>@exercise.Description</p>
-
-                <div class="row">
-                    <div class="col-md-2 font-weight-bold">Set</div>
-                    <div class="col-md-4 font-weight-bold">Reps</div>
-                    <div class="col-md-4 font-weight-bold">Weight (kg)</div>
-                </div>
-
-                @for (int i = 1; i <= 3; i++)
+                @if (!string.IsNullOrEmpty(exercise.Description))
                 {
-                    <div class="row mb-2">
-                        <div class="col-md-2">@i</div>
-                        <div class="col-md-4">
-                            <input type="number" name="exerciseSets[@exercise.Id][@(i-1)].reps" class="form-control" min="1" />
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" step="0.1" name="exerciseSets[@exercise.Id][@(i-1)].weight" class="form-control" min="0" />
-                        </div>
-                    </div>
+                    <p class="text-muted mb-3">@exercise.Description</p>
                 }
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Set</th>
+                                <th>Reps</th>
+                                <th>Weight (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 1; i <= 3; i++)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>
+                                        <input type="number"
+                                               name="exerciseSets[@exercise.Id][@(i - 1)].reps"
+                                               class="form-control"
+                                               min="0"
+                                               max="100"
+                                               placeholder="Enter reps" />
+                                    </td>
+                                    <td>
+                                        <input type="number"
+                                               name="exerciseSets[@exercise.Id][@(i - 1)].weight"
+                                               class="form-control"
+                                               min="0"
+                                               step="0.5"
+                                               placeholder="Enter weight" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     }
 
-    <div class="form-group">
-        <input type="submit" value="Save Workout" class="btn btn-primary" />
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">Back to Plans</a>
+        <button type="submit" class="btn btn-primary">Save Workout</button>
     </div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to Plans</a>
-</div>
+@section Scripts {
+    <script>
+        document.getElementById('workoutForm').addEventListener('submit', function(e) {
+            let hasEntries = false;
+            const inputs = document.querySelectorAll('input[type="number"]');
+
+            inputs.forEach(function(input) {
+                if (input.value && input.value > 0) {
+                    hasEntries = true;
+                }
+            });
+
+            if (!hasEntries) {
+                e.preventDefault();
+                alert('Please log at least one set before saving.');
+            }
+        });
+    </script>
+}

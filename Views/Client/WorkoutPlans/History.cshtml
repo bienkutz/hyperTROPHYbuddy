@@ -1,40 +1,58 @@
 ﻿@model IEnumerable<WorkoutLog>
+
 @{
     ViewData["Title"] = "Workout History";
     Layout = "_ClientLayout";
 }
 
-<h1>Workout History</h1>
+<div class="row mb-3">
+    <div class="col">
+        <h1>Workout History</h1>
+    </div>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Workout</th>
-            <th>Exercises</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var log in Model)
-        {
-            <tr>
-                <td>@log.Date.ToShortDateString()</td>
-                <td>@log.Workout.Name</td>
-                <td>
-                    @foreach (var set in log.SetLogs.GroupBy(s => s.ExerciseId))
-                    {
-                        var exercise = set.First().Exercise;
-                        <div>
-                            <strong>@exercise.Name</strong>:
-                            @string.Join(", ", set.Select(s => $"{s.Reps} reps × {s.Weight}kg"))
-                        </div>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Workout</th>
+                    <th>Exercises</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model)
+                {
+                    <tr>
+                        <td>@log.Date.ToString("MMM dd, yyyy")</td>
+                        <td>@log.Workout.Name</td>
+                        <td>
+                            @foreach (var set in log.SetLogs.GroupBy(s => s.ExerciseId))
+                            {
+                                var exercise = set.First().Exercise;
+                                <div class="mb-2">
+                                    <strong>@exercise.Name</strong>
+                                    <div class="small text-muted">
+                                        @string.Join(", ", set.Select(s => $"Set {s.SetNumber}: {s.Reps} × {s.Weight:F1}kg"))
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No workout history available yet.
+    </div>
+}
 
-<div>
-    <a asp-action="Index">Back to Plans</a>
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Back to Plans</a>
 </div>

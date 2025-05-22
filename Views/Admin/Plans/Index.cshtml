@@ -1,37 +1,54 @@
 ﻿@model IEnumerable<WorkoutPlan>
-
 @{
     ViewData["Title"] = "Workout Plans";
     Layout = "_AdminLayout";
 }
 
-<h1>Workout Plans</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Workout Plans</h1>
+    <a asp-action="Create" class="btn btn-primary">Create New Plan</a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Workouts</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var plan in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@plan.Name</td>
-                <td>@plan.WorkoutPlanType.Name</td>
-                <td>@plan.WorkoutPlanWorkouts.Count</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-sm btn-secondary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@plan.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Workouts</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var plan in Model)
+            {
+                <tr>
+                    <td>@plan.Name</td>
+                    <td><span class="badge bg-secondary">@plan.WorkoutPlanType.Name</span></td>
+                    <td>@(plan.Description?.Length > 50 ? plan.Description.Substring(0, 47) + "..." : plan.Description)</td>
+                    <td>
+                        <small class="text-muted">
+                            @plan.WorkoutPlanWorkouts.Count workout@(plan.WorkoutPlanWorkouts.Count != 1 ? "s" : "")
+                        </small>
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-sm btn-secondary">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@plan.Id" class="btn btn-sm btn-danger">Delete</a>
+                            <a asp-controller="Assign" asp-action="AssignToClient" asp-route-planId="@plan.Id"
+                               class="btn btn-sm btn-primary">Assign</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No workout plans found. Create your first plan to get started.
+    </div>
+}

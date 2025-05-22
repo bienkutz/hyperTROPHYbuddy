@@ -10,6 +10,7 @@
                                             
         // Navigation property
         public ICollection<WorkoutExercise> WorkoutExercises { get; set; }
+        public ICollection<SetLog> SetLogs { get; set; }
         public ApplicationUser Admin { get; set; }
     }
 }
