@@ -1,30 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace hyperTROPHYbuddy.Models
 {
     public class Workout
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string AdminId { get; set; }
-        // Navigation properties
-        public ICollection<WorkoutExercise> WorkoutExercises { get; set; }
-        public ICollection<WorkoutPlanWorkout> WorkoutPlanWorkouts { get; set; }
-        public ApplicationUser Admin { get; set; }
-
-        //For the binding of the selected exercises in the view
-        [NotMapped]
-        public List<int> SelectedExerciseIds { get; set; } = new List<int>();
-    }
-
-    // Junction table for Workout-Exercise many-to-many
-    public class WorkoutExercise
-    {
+        [Key]
         public int WorkoutId { get; set; }
-        public Workout Workout { get; set; }
-        public int ExerciseId { get; set; }
-        public Exercise Exercise { get; set; }
+        public string Name { get; set; }
+
+        [ForeignKey("CreatedBy")]
+        public string? CreatedByAdminId { get; set; }
+        public ApplicationUser? CreatedBy { get; set; }
+
+        // Navigation properties
+
+        public ICollection<WorkoutPlanWorkout>? WorkoutPlanWorkouts { get; set; } 
+        public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
+
+
     }
+
+    
 
 
 }

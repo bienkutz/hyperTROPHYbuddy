@@ -1,0 +1,81 @@
+﻿@model hyperTROPHYbuddy.Models.WorkoutPlan
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Workout Plan</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+</div>
+
+@if (Model.WorkoutPlanWorkouts != null && Model.WorkoutPlanWorkouts.Any())
+{
+    <h4 class="mt-4">Workouts in this Plan</h4>
+    <div class="row">
+        @foreach (var planWorkout in Model.WorkoutPlanWorkouts)
+        {
+            var workout = planWorkout.Workout;
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <strong>@workout?.Name</strong>
+                        <span class="badge bg-light text-dark float-end">Day @planWorkout.Day</span>
+                    </div>
+                    <div class="card-body">
+                        <h6>Exercises:</h6>
+                        @if (workout?.WorkoutExercises != null && workout.WorkoutExercises.Any())
+                        {
+                            <ul class="mb-0">
+                                @foreach (var we in workout.WorkoutExercises)
+                                {
+                                    <li>@we.Exercise?.Name</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No exercises assigned.</span>
+                        }
+                    </div>
+                    <div>
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <div class="d-flex gap-2 justify-content-center my-3">
+                            <a asp-controller="ExerciseLogs" asp-action="Create" asp-route-workoutId="@workout?.WorkoutId" class="btn btn-primary">Log Progress</a>
+                            <a asp-controller="ExerciseLogs" asp-action="Index" asp-route-workoutId="@workout?.WorkoutId" class="btn btn-secondary">View Progress</a>
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info mt-4">No workouts assigned to this plan.</div>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model?.WorkoutPlanId" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
+    </div>
+}

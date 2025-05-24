@@ -1,0 +1,70 @@
+﻿@model hyperTROPHYbuddy.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center border-bottom">Create an account</h3>
+                    <form asp-action="SignUp" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label"><b>Username</b></label>
+                            <input asp-for="UserName" type="text" class="form-control form-control-lg" id="username" placeholder="Your Username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label"><b>Password</b></label>
+                            <input asp-for="PasswordHash" type="password" class="form-control form-control-lg" id="password" placeholder="At least 8 characters">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><b>Be an Admin</b></label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="Role" id="roleAdmin" value="Admin">
+                                <label class="form-check-label" for="roleAdmin">
+                                    Yes
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="adminPasswordContainer" style="display: none;">
+                            <label for="adminPassword" class="form-label"><b>Admin Password</b></label>
+                            <input type="password" name="AdminPassword" class="form-control form-control-lg" id="adminPassword" placeholder="Enter admin password">
+                            @if (ViewData["AdminPasswordError"] != null)
+                            {
+                                <span class="text-danger">@ViewData["AdminPasswordError"]</span>
+                            }
+                        </div>
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a asp-controller="Home" asp-action="Login" class="text-decoration-none">Login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#roleAdmin').change(function() {
+                if($(this).is(':checked')) {
+                    $('#adminPasswordContainer').show();
+                } else {
+                    $('#adminPasswordContainer').hide();
+                }
+            });
+            
+            // Show admin password field if checkbox is already checked (e.g., on form validation error)
+            if($('#roleAdmin').is(':checked')) {
+                $('#adminPasswordContainer').show();
+            }
+        });
+    </script>
+}

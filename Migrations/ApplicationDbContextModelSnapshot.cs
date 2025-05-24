@@ -102,12 +102,10 @@ namespace hyperTROPHYbuddy.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -144,12 +142,10 @@ namespace hyperTROPHYbuddy.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -179,11 +175,9 @@ namespace hyperTROPHYbuddy.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -235,43 +229,15 @@ namespace hyperTROPHYbuddy.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.ClientWorkoutPlan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AssignedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("WorkoutPlanId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("WorkoutPlanId");
-
-                    b.ToTable("ClientWorkoutPlans");
-                });
-
             modelBuilder.Entity("hyperTROPHYbuddy.Models.Exercise", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ExerciseId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExerciseId"));
 
-                    b.Property<string>("AdminId")
-                        .IsRequired()
+                    b.Property<string>("CreatedByAdminId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -283,30 +249,28 @@ namespace hyperTROPHYbuddy.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VideoLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ExerciseId");
 
-                    b.HasIndex("AdminId");
+                    b.HasIndex("CreatedByAdminId");
 
                     b.ToTable("Exercises");
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.SetLog", b =>
+            modelBuilder.Entity("hyperTROPHYbuddy.Models.ExerciseLog", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ExerciseLogId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExerciseLogId"));
 
                     b.Property<int>("ExerciseId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("LoggedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Reps")
                         .HasColumnType("int");
@@ -314,42 +278,45 @@ namespace hyperTROPHYbuddy.Migrations
                     b.Property<int>("SetNumber")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(5, 2)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("WorkoutLogId")
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
+                    b.Property<int>("WorkoutId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
+                    b.HasKey("ExerciseLogId");
 
                     b.HasIndex("ExerciseId");
 
-                    b.HasIndex("WorkoutLogId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("SetLogs");
+                    b.HasIndex("WorkoutId");
+
+                    b.ToTable("ExerciseLogs");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.Workout", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("WorkoutId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkoutId"));
 
-                    b.Property<string>("AdminId")
-                        .IsRequired()
+                    b.Property<string>("CreatedByAdminId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("WorkoutId");
 
-                    b.HasIndex("AdminId");
+                    b.HasIndex("CreatedByAdminId");
 
                     b.ToTable("Workouts");
                 });
@@ -366,52 +333,16 @@ namespace hyperTROPHYbuddy.Migrations
 
                     b.HasIndex("ExerciseId");
 
-                    b.ToTable("WorkoutExercises");
-                });
-
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ClientWorkoutPlanId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WorkoutId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("ClientWorkoutPlanId");
-
-                    b.HasIndex("WorkoutId");
-
-                    b.ToTable("WorkoutLogs");
+                    b.ToTable("WorkoutExercise");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlan", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("WorkoutPlanId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdminId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkoutPlanId"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -421,55 +352,42 @@ namespace hyperTROPHYbuddy.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkoutPlanTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
-
-                    b.HasIndex("WorkoutPlanTypeId");
+                    b.HasKey("WorkoutPlanId");
 
                     b.ToTable("WorkoutPlans");
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanType", b =>
+            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanAssignment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("WorkoutPlanAssignmentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkoutPlanAssignmentId"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AssignedByAdminId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("AssignedToClientId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.ToTable("WorkoutPlanTypes");
+                    b.Property<int?>("WorkoutPlanId")
+                        .HasColumnType("int");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Weight Loss"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Hypertrophy"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "HIIT"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Powerlifting"
-                        });
+                    b.Property<int?>("WorkoutPlanId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("WorkoutPlanAssignmentId");
+
+                    b.HasIndex("AssignedByAdminId");
+
+                    b.HasIndex("AssignedToClientId");
+
+                    b.HasIndex("WorkoutPlanId");
+
+                    b.HasIndex("WorkoutPlanId1");
+
+                    b.ToTable("WorkoutPlanAssignments");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanWorkout", b =>
@@ -480,11 +398,14 @@ namespace hyperTROPHYbuddy.Migrations
                     b.Property<int>("WorkoutId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
                     b.HasKey("WorkoutPlanId", "WorkoutId");
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutPlanWorkouts");
+                    b.ToTable("WorkoutPlanWorkout");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -538,72 +459,51 @@ namespace hyperTROPHYbuddy.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.ClientWorkoutPlan", b =>
-                {
-                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Client")
-                        .WithMany("ClientWorkoutPlans")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("hyperTROPHYbuddy.Models.WorkoutPlan", "WorkoutPlan")
-                        .WithMany("ClientWorkoutPlans")
-                        .HasForeignKey("WorkoutPlanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("WorkoutPlan");
-                });
-
             modelBuilder.Entity("hyperTROPHYbuddy.Models.Exercise", b =>
                 {
-                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Admin")
-                        .WithMany("Exercises")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "CreatedBy")
+                        .WithMany("CreatedExercises")
+                        .HasForeignKey("CreatedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Admin");
+                    b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.SetLog", b =>
+            modelBuilder.Entity("hyperTROPHYbuddy.Models.ExerciseLog", b =>
                 {
-                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Client")
-                        .WithMany("SetLogs")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("hyperTROPHYbuddy.Models.Exercise", "Exercise")
-                        .WithMany("SetLogs")
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("hyperTROPHYbuddy.Models.WorkoutLog", "WorkoutLog")
-                        .WithMany("SetLogs")
-                        .HasForeignKey("WorkoutLogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Client");
+                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hyperTROPHYbuddy.Models.Workout", "Workout")
+                        .WithMany()
+                        .HasForeignKey("WorkoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Exercise");
 
-                    b.Navigation("WorkoutLog");
+                    b.Navigation("User");
+
+                    b.Navigation("Workout");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.Workout", b =>
                 {
-                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Admin")
-                        .WithMany("Workouts")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "CreatedBy")
+                        .WithMany("CreatedWorkouts")
+                        .HasForeignKey("CreatedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Admin");
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutExercise", b =>
@@ -611,7 +511,7 @@ namespace hyperTROPHYbuddy.Migrations
                     b.HasOne("hyperTROPHYbuddy.Models.Exercise", "Exercise")
                         .WithMany("WorkoutExercises")
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("hyperTROPHYbuddy.Models.Workout", "Workout")
@@ -625,50 +525,32 @@ namespace hyperTROPHYbuddy.Migrations
                     b.Navigation("Workout");
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutLog", b =>
-                {
-                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Client")
-                        .WithMany("WorkoutLogs")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("hyperTROPHYbuddy.Models.ClientWorkoutPlan", "ClientWorkoutPlan")
-                        .WithMany("WorkoutLogs")
-                        .HasForeignKey("ClientWorkoutPlanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("hyperTROPHYbuddy.Models.Workout", "Workout")
-                        .WithMany()
-                        .HasForeignKey("WorkoutId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("ClientWorkoutPlan");
-
-                    b.Navigation("Workout");
-                });
-
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlan", b =>
+            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanAssignment", b =>
                 {
                     b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Admin")
-                        .WithMany("WorkoutPlans")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .WithMany("AssignedByMe")
+                        .HasForeignKey("AssignedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("hyperTROPHYbuddy.Models.WorkoutPlanType", "WorkoutPlanType")
-                        .WithMany("WorkoutPlans")
-                        .HasForeignKey("WorkoutPlanTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Client")
+                        .WithMany("AssignedToMe")
+                        .HasForeignKey("AssignedToClientId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("hyperTROPHYbuddy.Models.WorkoutPlan", "WorkoutPlan")
+                        .WithMany()
+                        .HasForeignKey("WorkoutPlanId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("hyperTROPHYbuddy.Models.WorkoutPlan", null)
+                        .WithMany("Assignments")
+                        .HasForeignKey("WorkoutPlanId1");
 
                     b.Navigation("Admin");
 
-                    b.Navigation("WorkoutPlanType");
+                    b.Navigation("Client");
+
+                    b.Navigation("WorkoutPlan");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanWorkout", b =>
@@ -676,7 +558,7 @@ namespace hyperTROPHYbuddy.Migrations
                     b.HasOne("hyperTROPHYbuddy.Models.Workout", "Workout")
                         .WithMany("WorkoutPlanWorkouts")
                         .HasForeignKey("WorkoutId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("hyperTROPHYbuddy.Models.WorkoutPlan", "WorkoutPlan")
@@ -692,28 +574,17 @@ namespace hyperTROPHYbuddy.Migrations
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("ClientWorkoutPlans");
+                    b.Navigation("AssignedByMe");
 
-                    b.Navigation("Exercises");
+                    b.Navigation("AssignedToMe");
 
-                    b.Navigation("SetLogs");
+                    b.Navigation("CreatedExercises");
 
-                    b.Navigation("WorkoutLogs");
-
-                    b.Navigation("WorkoutPlans");
-
-                    b.Navigation("Workouts");
-                });
-
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.ClientWorkoutPlan", b =>
-                {
-                    b.Navigation("WorkoutLogs");
+                    b.Navigation("CreatedWorkouts");
                 });
 
             modelBuilder.Entity("hyperTROPHYbuddy.Models.Exercise", b =>
                 {
-                    b.Navigation("SetLogs");
-
                     b.Navigation("WorkoutExercises");
                 });
 
@@ -724,21 +595,11 @@ namespace hyperTROPHYbuddy.Migrations
                     b.Navigation("WorkoutPlanWorkouts");
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutLog", b =>
-                {
-                    b.Navigation("SetLogs");
-                });
-
             modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlan", b =>
                 {
-                    b.Navigation("ClientWorkoutPlans");
+                    b.Navigation("Assignments");
 
                     b.Navigation("WorkoutPlanWorkouts");
-                });
-
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanType", b =>
-                {
-                    b.Navigation("WorkoutPlans");
                 });
 #pragma warning restore 612, 618
         }

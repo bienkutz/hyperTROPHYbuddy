@@ -1,0 +1,34 @@
+﻿@model hyperTROPHYbuddy.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center border-bottom">Login</h3>
+                    <form asp-action="Login" method="post">
+                        <div class="">
+                            <label for="email" class="form-label"></label>
+                            <input asp-for="UserName" type="text" class="form-control form-control-lg" id="email" placeholder="Username">
+                        </div>
+                        <div class="">
+                            <label for="password" class="form-label"></label>
+                            <input asp-for="PasswordHash" type="password" class="form-control form-control-lg" id="password" placeholder="Password">
+                        </div>
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a asp-controller="Home" asp-action="SignUp" class="text-decoration-none">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,65 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using hyperTROPHYbuddy.Models
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button"
-               data-bs-toggle="dropdown" aria-expanded="false">
-                Hello @UserManager.GetUserAsync(User).Result.FirstName!
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                @if (User.IsInRole("Admin"))
-                {
-                    <li>
-                        <a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="Index">
-                            <i class="bi bi-person"></i> Profile
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-area="Admin" asp-controller="Settings" asp-action="Index">
-                            <i class="bi bi-gear"></i> Settings
-                        </a>
-                    </li>
-                }
-                else
-                {
-                    <li>
-                        <a class="dropdown-item" asp-area="Client" asp-controller="Profile" asp-action="Index">
-                            <i class="bi bi-person"></i> Profile
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-area="Client" asp-controller="Progress" asp-action="Index">
-                            <i class="bi bi-graph-up"></i> Progress
-                        </a>
-                    </li>
-                }
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
-                          asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <button type="submit" class="dropdown-item text-danger">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        </li>
+        <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Home" asp-action="Logout">Logout</a>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">
-                <i class="bi bi-person-plus"></i> Register
-            </a>
+            <a class="nav-link text-dark" asp-controller="Home" asp-action="Login">Login</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">
-                <i class="bi bi-box-arrow-in-right"></i> Login
-            </a>
+            <a class="nav-link text-dark" asp-controller="Home" asp-action="SignUp">Register</a>
         </li>
     }
 </ul>

@@ -13,7 +13,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">hyperTROPHYbuddy</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">hyperTROPHYbuddy</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,12 +21,41 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="addNewDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Add new
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="addNewDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="WorkoutPlans" asp-action="Create">Plan</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Create">Workout</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Exercises" asp-action="Create">Exercise</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="WorkoutPlanAssignments" asp-action="Create">Assign a workout</a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Client"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="WorkoutPlanAssignments" asp-action="MyPlan">My workout plan</a>
+                            </li>
+                        }
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -39,7 +68,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - hyperTROPHYbuddy - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - hyperTROPHYbuddy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,0 +1,44 @@
+﻿@model hyperTROPHYbuddy.Models.WorkoutPlanAssignment
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>WorkoutPlanAssignment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="WorkoutPlanAssignmentId" />
+            <div class="form-group">
+                <label asp-for="WorkoutPlanId" class="control-label"></label>
+                <select asp-for="WorkoutPlanId" class="form-control" asp-items="ViewBag.WorkoutPlanId"></select>
+                <span asp-validation-for="WorkoutPlanId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AssignedToClientId" class="control-label"></label>
+                <select asp-for="AssignedToClientId" class="form-control" asp-items="ViewBag.AssignedToClientId"></select>
+                <span asp-validation-for="AssignedToClientId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AssignedByAdminId" class="control-label"></label>
+                <select asp-for="AssignedByAdminId" class="form-control" asp-items="ViewBag.AssignedByAdminId"></select>
+                <span asp-validation-for="AssignedByAdminId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
