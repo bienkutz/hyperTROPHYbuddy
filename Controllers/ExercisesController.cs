@@ -131,5 +131,19 @@ namespace hyperTROPHYbuddy.Controllers
             await _exerciseService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+
+        //for client
+        public async Task<IActionResult> ClientDetails(int? id, int? workoutPlanId)
+        {
+            if (id == null)
+                return NotFound();
+
+            var exercise = await _exerciseService.GetByIdAsync(id.Value);
+            if (exercise == null)
+                return NotFound();
+
+            ViewBag.WorkoutPlanId = workoutPlanId;
+            return View("ClientDetails", exercise);
+        }
     }
 }

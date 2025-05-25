@@ -44,7 +44,19 @@
                             <ul class="mb-0">
                                 @foreach (var we in workout.WorkoutExercises)
                                 {
-                                    <li>@we.Exercise?.Name</li>
+                                    <li>
+                                        @we.Exercise?.Name
+                                        @if (we.Exercise != null)
+                                        {
+                                            <a asp-controller="Exercises"
+                                               asp-action="ClientDetails"
+                                               asp-route-id="@we.Exercise.ExerciseId"
+                                               asp-route-workoutPlanId ="@Model.WorkoutPlanId"
+                                               class="btn btn-link btn-sm p-0 ms-2">
+                                                Details
+                                            </a>
+                                        }
+                                    </li>
                                 }
                             </ul>
                         }

@@ -134,7 +134,7 @@ namespace hyperTROPHYbuddy.Controllers
             {
                 try
                 {
-                    _workoutPlanService.UpdateAsync(workoutPlan);
+                    await _workoutPlanService.UpdateAsync(workoutPlan);
                 }
                 catch (Exception)
                 {

@@ -88,8 +88,26 @@
                         '<td><input type="number" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Reps" class="form-control" min="0" required />' +
                         '<span class="text-danger field-validation-valid" data-valmsg-for="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Reps" data-valmsg-replace="true"></span></td>' +
                         '<td><input type="number" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Weight" class="form-control" min="0" step="0.1" required />' +
-                        '<span class="text-danger field-validation-valid" data-valmsg-for="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Weight" data-valmsg-replace="true"></span></td>';
+                        '<span class="text-danger field-validation-valid" data-valmsg-for="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Weight" data-valmsg-replace="true"></span></td>' +
+                        ' <button type="button" class="btn btn-danger btn-sm remove-set-btn ms-2" title="Remove this set">&times;</button></td>';
+
                     table.appendChild(row);
+
+                    // Attach remove event to the new button
+                    row.querySelector('.remove-set-btn').addEventListener('click', function () {
+                        row.remove();
+                        // Enable the add button if it was disabled
+                        btn.disabled = false;
+                        // Remove set limit message if present
+                        var msg = btn.parentNode.querySelector('.set-limit-msg');
+                        if (msg) msg.remove();
+                        // Re-number remaining set rows
+                        Array.from(table.getElementsByTagName('tr')).forEach(function (tr, idx) {
+                            var setNum = idx + 1;
+                            tr.querySelector('td').childNodes[0].nodeValue = setNum;
+                            tr.querySelector('input[name*=".SetNumber"]').value = setNum;
+                        });
+                    });
 
                     // Disable button if max sets reached
                     if (setNumber === 5) {
