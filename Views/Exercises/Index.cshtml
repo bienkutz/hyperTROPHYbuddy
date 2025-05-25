@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Exercises</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -21,9 +21,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.VideoLink)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -37,10 +34,12 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.VideoLink)
-            </td>
-            <td>
-                    @item.CreatedBy?.UserName
+                    @if (!string.IsNullOrWhiteSpace(item.VideoLink))
+                    {
+                        <a href="@item.VideoLink" target="_blank" rel="noopener">
+                            @item.VideoLink
+                        </a>
+                    }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ExerciseId">Edit</a> |

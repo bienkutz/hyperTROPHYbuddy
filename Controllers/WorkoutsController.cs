@@ -116,7 +116,7 @@ namespace hyperTROPHYbuddy.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkoutId,Name,CreatedByAdminId")] Workout workout)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkoutId,Name")] Workout workout)
         {
             if (id != workout.WorkoutId)
                 return NotFound();

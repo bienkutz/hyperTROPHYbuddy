@@ -97,7 +97,7 @@ namespace hyperTROPHYbuddy.Controllers
             ViewData["WorkoutPlanId"] = new SelectList(workoutPlans, "WorkoutPlanId", "Description", workoutPlanAssignment.WorkoutPlanId);
             return View(workoutPlanAssignment);
         }
-
+        /*
         // GET: WorkoutPlanAssignments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -155,7 +155,7 @@ namespace hyperTROPHYbuddy.Controllers
             ViewData["WorkoutPlanId"] = new SelectList(workoutPlans, "WorkoutPlanId", "Description", workoutPlanAssignment.WorkoutPlanId);
             return View(workoutPlanAssignment);
         }
-
+        */
         // GET: WorkoutPlanAssignments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
