@@ -123,7 +123,7 @@ namespace hyperTROPHYbuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkoutPlanId,Name,Description")] WorkoutPlan workoutPlan)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkoutPlanId,Name,Description,Type")] WorkoutPlan workoutPlan)
         {
             if (id != workoutPlan.WorkoutPlanId)
             {
