@@ -2,10 +2,19 @@
 
 @{
     ViewData["Title"] = "Details";
+    var noPlanAssigned = ViewBag.NoPlanAssigned as bool? ?? false;
 }
 
 <h1>Workout Plan</h1>
 
+@if (noPlanAssigned)
+{
+    <div class="alert alert-info mt-4">
+        No workout plan is assigned to you yet. Please contact your trainer or check back later.
+    </div>
+}
+else
+{
 <div>
     <hr />
     <dl class="row">
@@ -96,4 +105,5 @@ else
         <a asp-action="Edit" asp-route-id="@Model?.WorkoutPlanId" class="btn btn-primary">Edit</a>
         <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
     </div>
+}
 }

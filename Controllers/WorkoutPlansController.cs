@@ -78,7 +78,7 @@ namespace hyperTROPHYbuddy.Controllers
             var allWorkouts = await _workoutService.GetAllAsync();
             var userWorkouts = allWorkouts
                 .Where(w => w.CreatedByAdminId == currentUser.Id)
-                .Select(w => new { workoutId = w.WorkoutId, name = w.Name })
+                //.Select(w => new { workoutId = w.WorkoutId, name = w.Name })
                 .ToList();
 
             ViewBag.Workouts = userWorkouts;
@@ -114,7 +114,7 @@ namespace hyperTROPHYbuddy.Controllers
             var allWorkouts = await _workoutService.GetAllAsync();
             var currentUser = await _userManager.GetUserAsync(User);
             ViewBag.Workouts = allWorkouts.Where(w => w.CreatedByAdminId == currentUser.Id)
-                                          .Select(w => new { workoutId = w.WorkoutId, name = w.Name })
+                                          //.Select(w => new { workoutId = w.WorkoutId, name = w.Name })
                                           .ToList();
             return View(workoutPlan);
         }

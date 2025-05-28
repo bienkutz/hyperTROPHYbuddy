@@ -194,7 +194,11 @@ namespace hyperTROPHYbuddy.Controllers
             var assignment = assignments.FirstOrDefault();
 
             if (assignment == null || assignment.WorkoutPlanId == null)
-                return RedirectToAction("Index", "WorkoutPlans"); // Or show a message
+            {
+                // Pass a flag to the Details view
+                ViewBag.NoPlanAssigned = true;
+                return View("~/Views/WorkoutPlans/Details.cshtml", null);
+            }
 
             // Redirect to WorkoutPlans/Details/{id}
             return RedirectToAction("Details", "WorkoutPlans", new { id = assignment.WorkoutPlanId });

@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Create Workout Plan";
-    var workouts = ViewBag.Workouts as IEnumerable<dynamic>; // Use dynamic for anonymous types or strongly type if possible
+    var workouts = ViewBag.Workouts as List<hyperTROPHYbuddy.Models.Workout>; // Use dynamic for anonymous types or strongly type if possible
 }
 
 <h1 class="mt-4 mb-4">Create Workout Plan</h1>
@@ -48,10 +48,10 @@
                         {
                             <tr class="workout-item">
                                 <td>
-                                    <input type="checkbox" name="WorkoutIds" value="@w.workoutId" id="cb_@i" onchange="toggleDayInput(@i)" />
+                                    <input type="checkbox" name="WorkoutIds" value="@w.WorkoutId" id="cb_@i" onchange="toggleDayInput(@i)" />
                                 </td>
                                 <td>
-                                    <label for="cb_@i">@w.name</label>
+                                    <label for="cb_@i">@w.Name</label>
                                 </td>
                                 <td>
                                     <input type="number" name="Days" id="day_@i" class="form-control" min="1" max="7" disabled required />

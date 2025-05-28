@@ -153,19 +153,24 @@ namespace hyperTROPHYbuddy.Controllers
             {
                 try
                 {
-                    await _workoutService.UpdateAsync(workout);
+                    var existingWorkout = await _workoutService.GetByIdAsync(id);
+                    if (existingWorkout == null)
+                        return NotFound();
 
-                    // Remove all existing exercises for this workout
-                    await _workoutExerciseService.RemoveAllForWorkoutAsync(workout.WorkoutId);
+                    existingWorkout.Name = workout.Name;
+                    // Do NOT touch existingWorkout.CreatedByAdminId
 
-                    // Add selected exercises
+                    await _workoutService.UpdateAsync(existingWorkout);
+
+                    // Remove and re-add exercises as before...
+                    await _workoutExerciseService.RemoveAllForWorkoutAsync(existingWorkout.WorkoutId);
                     if (SelectedExerciseIds != null && SelectedExerciseIds.Length > 0)
                     {
                         foreach (var exId in SelectedExerciseIds)
                         {
                             var workoutExercise = new WorkoutExercise
                             {
-                                WorkoutId = workout.WorkoutId,
+                                WorkoutId = existingWorkout.WorkoutId,
                                 ExerciseId = exId
                             };
                             await _workoutExerciseService.AddAsync(workoutExercise);
