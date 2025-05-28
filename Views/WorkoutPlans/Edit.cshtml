@@ -2,43 +2,117 @@
 
 @{
     ViewData["Title"] = "Edit";
+    var workouts = ViewBag.Workouts as List<hyperTROPHYbuddy.Models.Workout>;
+    var selectedWorkoutIds = ViewBag.SelectedWorkoutIds as List<int> ?? new List<int>();
+    var workoutDays = ViewBag.WorkoutDays as Dictionary<int, int> ?? new Dictionary<int, int>();
 }
 
 <h1>Edit</h1>
 
-<h4>WorkoutPlan</h4>
+<h4>Workout Plan</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-8 col-lg-6">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="WorkoutPlanId" />
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Type" class="control-label"></label>
                 <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<hyperTROPHYbuddy.Models.WorkoutPlanType>()"></select>
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <h4 class="mt-4">Select Workouts and Assign Days</h4>
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" id="workoutSearch" placeholder="Search workouts..." autocomplete="off" />
+                <button type="button" class="btn btn-outline-secondary" id="resetWorkoutSearch" title="Show all workouts">
+                    &#x21bb;
+                </button>
+            </div>
+            <table class="table table-bordered align-middle">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Workout</th>
+                        <th>Day (1=Mon, 7=Sun)</th>
+                    </tr>
+                </thead>
+                <tbody id="workoutList">
+                    @if (workouts != null)
+                    {
+                        int i = 0;
+                        foreach (var w in workouts)
+                        {
+                            var checkedAttr = selectedWorkoutIds.Contains(w.WorkoutId) ? "checked" : "";
+                            var dayValue = workoutDays.ContainsKey(w.WorkoutId) ? workoutDays[w.WorkoutId].ToString() : "";
+                            <tr class="workout-item">
+                                <td>
+                                    <input type="checkbox" name="SelectedWorkoutIds" value="@w.WorkoutId" id="cb_@i" onchange="toggleDayInput(@i)" @checkedAttr />
+                                </td>
+                                <td>
+                                    <label for="cb_@i">@w.Name</label>
+                                </td>
+                                <td>
+                                    <input type="number" name="Days" id="day_@i" class="form-control"
+                                           min="1" max="7"
+                                           value="@dayValue"
+                                           @(checkedAttr == "checked" ? "" : "disabled")
+                                           required />
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleDayInput(idx) {
+            var cb = document.getElementById('cb_' + idx);
+            var dayInput = document.getElementById('day_' + idx);
+            dayInput.disabled = !cb.checked;
+            if (!cb.checked) {
+                dayInput.value = '';
+            }
+        }
+
+        // Search and reset logic
+        const searchInput = document.getElementById('workoutSearch');
+        const resetBtn = document.getElementById('resetWorkoutSearch');
+        const items = document.querySelectorAll('#workoutList .workout-item');
+
+        function filterWorkouts() {
+            var filter = searchInput.value.toLowerCase();
+            items.forEach(function (item) {
+                var label = item.textContent || item.innerText;
+                item.style.display = label.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterWorkouts);
+
+        resetBtn.addEventListener('click', function () {
+            searchInput.value = '';
+            filterWorkouts();
+            searchInput.focus();
+        });
+    </script>
 }

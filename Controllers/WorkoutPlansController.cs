@@ -123,15 +123,31 @@ namespace hyperTROPHYbuddy.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var workoutPlan = await _workoutPlanService.GetByIdAsync(id.Value);
             if (workoutPlan == null)
-            {
                 return NotFound();
-            }
+
+            // Get all workouts created by this admin
+            var currentUser = await _userManager.GetUserAsync(User);
+            var allWorkouts = (await _workoutService.GetAllAsync())
+                .Where(w => w.CreatedByAdminId == currentUser.Id)
+                .ToList();
+
+            // Get selected workout IDs for this plan
+            var selectedWorkoutIds = (await _workoutPlanWorkoutService.GetByPlanIdAsync(workoutPlan.WorkoutPlanId))
+                .Select(pw => pw.WorkoutId)
+                .ToList();
+
+            // Get days for selected workouts
+            var workoutDays = (await _workoutPlanWorkoutService.GetByPlanIdAsync(workoutPlan.WorkoutPlanId))
+                .ToDictionary(pw => pw.WorkoutId, pw => pw.Day);
+
+            ViewBag.Workouts = allWorkouts;
+            ViewBag.SelectedWorkoutIds = selectedWorkoutIds;
+            ViewBag.WorkoutDays = workoutDays;
+
             return View(workoutPlan);
         }
 
@@ -140,31 +156,56 @@ namespace hyperTROPHYbuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkoutPlanId,Name,Description,Type")] WorkoutPlan workoutPlan)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkoutPlanId,Name,Description,Type")] WorkoutPlan workoutPlan, int[] SelectedWorkoutIds, int[] Days)
         {
             if (id != workoutPlan.WorkoutPlanId)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     await _workoutPlanService.UpdateAsync(workoutPlan);
+
+                    // Remove all existing workouts for this plan
+                    await _workoutPlanWorkoutService.DeleteAllForPlanAsync(workoutPlan.WorkoutPlanId);
+
+                    // Add selected workouts with their days
+                    if (SelectedWorkoutIds != null && SelectedWorkoutIds.Length > 0)
+                    {
+                        for (int i = 0; i < SelectedWorkoutIds.Length; i++)
+                        {
+                            var planWorkout = new WorkoutPlanWorkout
+                            {
+                                WorkoutPlanId = workoutPlan.WorkoutPlanId,
+                                WorkoutId = SelectedWorkoutIds[i],
+                                Day = Days[i]
+                            };
+                            await _workoutPlanWorkoutService.CreateAsync(planWorkout);
+                        }
+                    }
                 }
-                catch (Exception)
+                catch
                 {
                     if (!WorkoutPlanExists(workoutPlan.WorkoutPlanId))
-                    {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
+            }
+
+            // Repopulate workouts if model state is invalid
+            var currentUser = await _userManager.GetUserAsync(User);
+            var allWorkouts = (await _workoutService.GetAllAsync())
+                .Where(w => w.CreatedByAdminId == currentUser.Id)
+                .ToList();
+            ViewBag.Workouts = allWorkouts;
+            ViewBag.SelectedWorkoutIds = SelectedWorkoutIds?.ToList() ?? new List<int>();
+            ViewBag.WorkoutDays = new Dictionary<int, int>();
+            if (SelectedWorkoutIds != null && Days != null)
+            {
+                for (int i = 0; i < SelectedWorkoutIds.Length && i < Days.Length; i++)
+                    ViewBag.WorkoutDays[SelectedWorkoutIds[i]] = Days[i];
             }
             return View(workoutPlan);
         }

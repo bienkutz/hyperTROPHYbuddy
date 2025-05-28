@@ -26,6 +26,12 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <h4 class="mt-4">Select Workouts and Assign Days</h4>
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" id="workoutSearch" placeholder="Search workouts..." autocomplete="off" />
+                <button type="button" class="btn btn-outline-secondary" id="resetWorkoutSearch" title="Show all workouts">
+                    &#x21bb;
+                </button>
+            </div>
             <table class="table table-bordered align-middle">
                 <thead>
                     <tr>
@@ -34,13 +40,13 @@
                         <th>Day (1=Mon, 7=Sun)</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="workoutList">
                     @if (workouts != null)
                     {
                         int i = 0;
                         foreach (var w in workouts)
                         {
-                            <tr>
+                            <tr class="workout-item">
                                 <td>
                                     <input type="checkbox" name="WorkoutIds" value="@w.workoutId" id="cb_@i" onchange="toggleDayInput(@i)" />
                                 </td>
@@ -75,5 +81,26 @@
                 dayInput.value = '';
             }
         }
+
+        // Search and reset logic
+        const searchInput = document.getElementById('workoutSearch');
+        const resetBtn = document.getElementById('resetWorkoutSearch');
+        const items = document.querySelectorAll('#workoutList .workout-item');
+
+        function filterWorkouts() {
+            var filter = searchInput.value.toLowerCase();
+            items.forEach(function (item) {
+                var label = item.textContent || item.innerText;
+                item.style.display = label.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterWorkouts);
+
+        resetBtn.addEventListener('click', function () {
+            searchInput.value = '';
+            filterWorkouts();
+            searchInput.focus();
+        });
     </script>
 }

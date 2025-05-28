@@ -126,7 +126,17 @@ namespace hyperTROPHYbuddy.Controllers
             if (workout == null)
                 return NotFound();
 
-            ViewData["CreatedByAdminId"] = new SelectList(_userManager.Users.ToList(), "Id", "UserName", workout.CreatedByAdminId);
+            // Get all exercises
+            var allExercises = (await _exerciseService.GetAllAsync()).ToList();
+
+            // Get selected exercise IDs for this workout
+            var selectedExerciseIds = (await _workoutExerciseService.GetByWorkoutIdAsync(workout.WorkoutId))
+                .Select(we => we.ExerciseId)
+                .ToList();
+
+            ViewBag.Exercises = allExercises;
+            ViewBag.SelectedExerciseIds = selectedExerciseIds;
+
             return View(workout);
         }
 
@@ -134,7 +144,7 @@ namespace hyperTROPHYbuddy.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkoutId,Name")] Workout workout)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkoutId,Name")] Workout workout, int[] SelectedExerciseIds)
         {
             if (id != workout.WorkoutId)
                 return NotFound();
@@ -144,6 +154,23 @@ namespace hyperTROPHYbuddy.Controllers
                 try
                 {
                     await _workoutService.UpdateAsync(workout);
+
+                    // Remove all existing exercises for this workout
+                    await _workoutExerciseService.RemoveAllForWorkoutAsync(workout.WorkoutId);
+
+                    // Add selected exercises
+                    if (SelectedExerciseIds != null && SelectedExerciseIds.Length > 0)
+                    {
+                        foreach (var exId in SelectedExerciseIds)
+                        {
+                            var workoutExercise = new WorkoutExercise
+                            {
+                                WorkoutId = workout.WorkoutId,
+                                ExerciseId = exId
+                            };
+                            await _workoutExerciseService.AddAsync(workoutExercise);
+                        }
+                    }
                 }
                 catch
                 {
@@ -154,7 +181,10 @@ namespace hyperTROPHYbuddy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CreatedByAdminId"] = new SelectList(_userManager.Users.ToList(), "Id", "UserName", workout.CreatedByAdminId);
+
+            // Repopulate exercises if model state is invalid
+            ViewBag.Exercises = (await _exerciseService.GetAllAsync()).ToList();
+            ViewBag.SelectedExerciseIds = SelectedExerciseIds?.ToList() ?? new List<int>();
             return View(workout);
         }
 
