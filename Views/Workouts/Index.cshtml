@@ -2,9 +2,29 @@
 
 @{
     ViewData["Title"] = "Index";
+    var search = ViewBag.Search as string;
 }
 
 <h1>Workouts</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <form id="searchForm" method="get" asp-action="Index" class="mb-3" style="max-width: 400px; position: relative;">
+        <div class="input-group" style="position: relative;">
+            <input type="text" name="search" class="form-control" placeholder="Search by name..." value="@search" autocomplete="off" />
+            <button type="submit" class="btn btn-outline-secondary">Search</button>
+            <div id="suggestions-container" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000;"></div>
+        </div>
+    </form>
+}
+
+@if (!string.IsNullOrWhiteSpace(search))
+{
+    <div class="alert alert-info mb-3">
+        Showing results for: <strong>@search</strong>
+        <a asp-action="Index" class="btn btn-link btn-sm">Show all</a>
+    </div>
+}
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -34,3 +54,70 @@
 }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var $search = $('input[name="search"]');
+            var $form = $('#searchForm');
+            var $suggestionsContainer = $('#suggestions-container');
+
+            $search.on('input', function () {
+                var query = $(this).val();
+                if (query.length < 1) {
+                    $suggestionsContainer.empty().hide();
+                    return;
+                }
+                $.get('@Url.Action("Suggest", "Workouts")', { term: query }, function (data) {
+                    $suggestionsContainer.empty();
+                    if (data && data.length) {
+                        data.forEach(function (item) {
+                            var $item = $('<button type="button" class="list-group-item list-group-item-action w-100 text-start"></button>').text(item);
+                            $item.on('mousedown', function (e) {
+                                e.preventDefault();
+                                $search.val(item);
+                                $suggestionsContainer.empty().hide();
+                                $form.submit();
+                            });
+                            $suggestionsContainer.append($item);
+                        });
+                        $suggestionsContainer.show();
+                    } else {
+                        $suggestionsContainer.hide();
+                    }
+                });
+            });
+
+            $search.on('blur', function () {
+                setTimeout(function () { $suggestionsContainer.hide(); }, 150);
+            });
+
+            $search.on('focus', function () {
+                if ($suggestionsContainer.children().length > 0) {
+                    $suggestionsContainer.show();
+                }
+            });
+        });
+    </script>
+    <style>
+        #suggestions-container {
+            display: none;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-top: none;
+            border-radius: 0 0 .375rem .375rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+            #suggestions-container .list-group-item {
+                cursor: pointer;
+            }
+
+                #suggestions-container .list-group-item:hover,
+                #suggestions-container .list-group-item:focus {
+                    background-color: #f8f9fa;
+                }
+    </style>
+}

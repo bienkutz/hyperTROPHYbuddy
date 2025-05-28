@@ -21,10 +21,30 @@ namespace hyperTROPHYbuddy.Controllers
         }
 
         // GET: Exercises
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
             var exercises = await _exerciseService.GetAllAsync();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                exercises = exercises.Where(e => e.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            ViewBag.Search = search;
             return View(exercises);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Suggest(string term)
+        {
+            var exercises = await _exerciseService.GetAllAsync();
+            var suggestions = exercises
+                .Where(e => !string.IsNullOrEmpty(term) && e.Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .Select(e => e.Name)
+                .Distinct()
+                .Take(10)
+                .ToList();
+            return Json(suggestions);
         }
 
         // GET: Exercises/Details/5

@@ -1,10 +1,41 @@
 ﻿@model IEnumerable<hyperTROPHYbuddy.Models.WorkoutPlan>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Plans";
+    var types = ViewBag.Types as List<SelectListItem>;
+    var selectedType = ViewBag.SelectedType as WorkoutPlanType?;
 }
 
 <h1>Plans</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <form method="get" asp-action="Index" class="mb-3" style="max-width: 400px;">
+        <div class="input-group">
+            <select name="type" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Filter by Type --</option>
+                @if (types != null)
+                {
+                    foreach (var t in types)
+                    {
+                        <option value="@t.Value" selected="@(t.Selected ? "selected" : null)">
+                            @t.Text
+                        </option>
+                    }
+                }
+            </select>
+            <button type="submit" class="btn btn-outline-secondary">Filter</button>
+        </div>
+    </form>
+}
+
+@if (selectedType != null)
+{
+    <div class="alert alert-info mb-3">
+        Showing plans of type: <strong>@selectedType</strong>
+        <a asp-action="Index" class="btn btn-link btn-sm">Show all plans</a>
+    </div>
+}
 
 <p>
     <a asp-action="Create">Create New</a>

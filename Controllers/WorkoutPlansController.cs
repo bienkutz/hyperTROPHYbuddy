@@ -32,9 +32,26 @@ namespace hyperTROPHYbuddy.Controllers
         }
 
         // GET: WorkoutPlans
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(WorkoutPlanType? type)
         {
-            return View(await _workoutPlanService.GetAllAsync());
+            var allPlans = await _workoutPlanService.GetAllAsync();
+            if (type.HasValue)
+            {
+                allPlans = allPlans.Where(p => p.Type == type.Value);
+            }
+
+            // Pass available types for dropdown
+            ViewBag.Types = Enum.GetValues(typeof(WorkoutPlanType))
+                                .Cast<WorkoutPlanType>()
+                                .Select(t => new SelectListItem
+                                {
+                                    Value = ((int)t).ToString(),
+                                    Text = t.ToString(),
+                                    Selected = type.HasValue && t == type.Value
+                                }).ToList();
+
+            ViewBag.SelectedType = type;
+            return View(allPlans);
         }
 
         // GET: WorkoutPlans/Details/5
