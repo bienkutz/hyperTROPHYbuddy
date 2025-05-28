@@ -200,8 +200,15 @@ namespace hyperTROPHYbuddy.Controllers
                 return View("~/Views/WorkoutPlans/Details.cshtml", null);
             }
 
-            // Redirect to WorkoutPlans/Details/{id}
-            return RedirectToAction("Details", "WorkoutPlans", new { id = assignment.WorkoutPlanId });
-        }
+            // Eagerly load the plan with its workouts and exercises
+            var plan = await _workoutPlanService.GetByIdAsync(assignment.WorkoutPlanId.Value);
+
+            ViewBag.AdminUserName = assignment.Admin?.UserName ?? "Unknown";
+            ViewBag.NoPlanAssigned = false; // Ensure this is set
+
+            return View("~/Views/WorkoutPlans/Details.cshtml", plan);
+        
+        
+    }
     }
 }
