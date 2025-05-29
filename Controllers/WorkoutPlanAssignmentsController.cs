@@ -189,15 +189,28 @@ namespace hyperTROPHYbuddy.Controllers
             if (user == null)
                 return Challenge();
 
-            // Get the first assignment for this client (adjust if you want to handle multiple)
+            // Get the latest assignment for this client
             var assignments = await _assignmentService.GetByClientIdAsync(user.Id);
-            var assignment = assignments.FirstOrDefault();
+            var assignment = assignments.OrderByDescending(a => a.WorkoutPlanAssignmentId).FirstOrDefault();
 
             if (assignment == null || assignment.WorkoutPlanId == null)
             {
                 // Pass a flag to the Details view
                 ViewBag.NoPlanAssigned = true;
                 return View("~/Views/WorkoutPlans/Details.cshtml", null);
+            }
+
+            // Check if the user has been notified about this assignment
+            if (user.LastNotifiedWorkoutPlanAssignmentId != assignment.WorkoutPlanAssignmentId)
+            {
+                ViewBag.ShowPlanAssignedNotification = true;
+                // Update the user so they won't see the notification again until a new assignment
+                user.LastNotifiedWorkoutPlanAssignmentId = assignment.WorkoutPlanAssignmentId;
+                await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                ViewBag.ShowPlanAssignedNotification = false;
             }
 
             // Eagerly load the plan with its workouts and exercises

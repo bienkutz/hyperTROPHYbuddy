@@ -7,6 +7,13 @@
 
 <h1>Workout Plan</h1>
 
+@if (ViewBag.ShowPlanAssignedNotification == true)
+{
+    <div class="alert alert-success mt-4">
+        You have been assigned a new workout plan!
+    </div>
+}
+
 @if (noPlanAssigned)
 {
     <div class="alert alert-info mt-4">
