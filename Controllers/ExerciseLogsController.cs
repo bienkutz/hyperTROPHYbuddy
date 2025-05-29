@@ -75,7 +75,8 @@ namespace hyperTROPHYbuddy.Controllers
                     ExerciseId = log.ExerciseId,
                     SetNumber = log.SetNumber,
                     Reps = log.Reps,
-                    Weight = log.Weight
+                    Weight = log.Weight,
+                    LoggedAt = DateTime.Now
                 };
                 _context.Add(entry);
             }
@@ -101,18 +102,28 @@ namespace hyperTROPHYbuddy.Controllers
                 ViewBag.Exercises = workout?.WorkoutExercises.Select(we => we.Exercise).ToList();
             }
 
-            // Group logs by Workout and Date (date only, not time)
+            // Group logs by Workout and LoggedAt (date + hour + minute)
             var groupedLogs = logsQuery
                 .AsEnumerable()
-                .GroupBy(l => new { l.WorkoutId, Date = l.LoggedAt.Date })
+                .GroupBy(l => new
+                {
+                    l.WorkoutId,
+                    DateTime = new DateTime(
+                        l.LoggedAt.Year,
+                        l.LoggedAt.Month,
+                        l.LoggedAt.Day,
+                        l.LoggedAt.Hour,
+                        l.LoggedAt.Minute,
+                        0)
+                })
                 .Select(g => new
                 {
-                     WorkoutId = g.Key.WorkoutId,
-                     Date = g.Key.Date,
-                     WorkoutName = g.First().Workout?.Name,
-                     LogCount = g.Count()
+                    WorkoutId = g.Key.WorkoutId,
+                    DateTime = g.Key.DateTime,
+                    WorkoutName = g.First().Workout?.Name,
+                    LogCount = g.Count()
                 })
-                .OrderByDescending(g => g.Date)
+                .OrderByDescending(g => g.DateTime)
                 .ToList();
 
             return View("GroupedIndex", groupedLogs);
@@ -124,7 +135,15 @@ namespace hyperTROPHYbuddy.Controllers
             var logs = _context.Set<ExerciseLog>()
                 .Include(l => l.Exercise)
                 .Include(l => l.Workout)
-                .Where(l => l.UserId == user.Id && l.WorkoutId == workoutId && l.LoggedAt.Date == date.Date)
+                .Where(l =>
+                    l.UserId == user.Id &&
+                    l.WorkoutId == workoutId &&
+                    l.LoggedAt.Year == date.Year &&
+                    l.LoggedAt.Month == date.Month &&
+                    l.LoggedAt.Day == date.Day &&
+                    l.LoggedAt.Hour == date.Hour &&
+                    l.LoggedAt.Minute == date.Minute
+                )
                 .OrderBy(l => l.Exercise.Name).ThenBy(l => l.SetNumber)
                 .ToList();
 

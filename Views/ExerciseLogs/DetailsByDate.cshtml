@@ -14,16 +14,16 @@
 
 <h2>Workout Log Details</h2>
 <p>
-    <strong>Date:</strong> @date?.ToShortDateString() <br />
+    <strong>Date & Time:</strong> @date?.ToString("dd.MM.yyyy HH:mm") <br />
     <strong>Workout:</strong> @workoutName
 </p>
 
 @if (exercises != null && exercises.Count > 0)
 {
-    <form method="get" asp-action="DetailsByDate" class="mb-3">
+    <form method="get" asp-action="DetailsByDate" class="mb-3" style="max-width: 400px;">
         <input type="hidden" name="workoutId" value="@Model.FirstOrDefault()?.WorkoutId" />
-        <input type="hidden" name="date" value="@date?.ToString("yyyy-MM-dd")" />
-        <div class="input-group" style="max-width: 400px;">
+        <input type="hidden" name="date" value="@date?.ToString("yyyy-MM-ddTHH:mm:ss")" />
+        <div class="input-group">
             <select name="exerciseId" class="form-select" onchange="this.form.submit()">
                 <option value="">-- Filter by Exercise --</option>
                 @foreach (var ex in exercises)
@@ -36,6 +36,17 @@
             <button type="submit" class="btn btn-outline-secondary">Filter</button>
         </div>
     </form>
+}
+
+@if (exerciseId != null)
+{
+    <div class="alert alert-info mb-3">
+        Filtering by exercise: <strong>@exercises?.FirstOrDefault(e => e.ExerciseId == exerciseId)?.Name</strong>
+        <a asp-action="DetailsByDate"
+           asp-route-workoutId="@Model.FirstOrDefault()?.WorkoutId"
+           asp-route-date="@date?.ToString("yyyy-MM-ddTHH:mm:ss")"
+           class="btn btn-link btn-sm">Show all exercises</a>
+    </div>
 }
 
 <table class="table">
