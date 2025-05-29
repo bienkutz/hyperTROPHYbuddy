@@ -1,0 +1,65 @@
+﻿@model IEnumerable<hyperTROPHYbuddy.Models.ExerciseLog>
+@{
+    ViewData["Title"] = "Workout Log Details";
+    var date = ViewBag.Date as DateTime?;
+    var workoutName = ViewBag.WorkoutName as string;
+    var exercises = ViewBag.Exercises as List<hyperTROPHYbuddy.Models.Exercise>;
+    int? exerciseId = null;
+    if (Context.Request.Query.ContainsKey("exerciseId"))
+    {
+        int.TryParse(Context.Request.Query["exerciseId"], out var eid);
+        exerciseId = eid;
+    }
+}
+
+<h2>Workout Log Details</h2>
+<p>
+    <strong>Date:</strong> @date?.ToShortDateString() <br />
+    <strong>Workout:</strong> @workoutName
+</p>
+
+@if (exercises != null && exercises.Count > 0)
+{
+    <form method="get" asp-action="DetailsByDate" class="mb-3">
+        <input type="hidden" name="workoutId" value="@Model.FirstOrDefault()?.WorkoutId" />
+        <input type="hidden" name="date" value="@date?.ToString("yyyy-MM-dd")" />
+        <div class="input-group" style="max-width: 400px;">
+            <select name="exerciseId" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Filter by Exercise --</option>
+                @foreach (var ex in exercises)
+                {
+                    <option value="@ex.ExerciseId" selected="@(exerciseId == ex.ExerciseId ? "selected" : null)">
+                        @ex.Name
+                    </option>
+                }
+            </select>
+            <button type="submit" class="btn btn-outline-secondary">Filter</button>
+        </div>
+    </form>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Exercise</th>
+            <th>Set</th>
+            <th>Reps</th>
+            <th>Weight</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            if (exerciseId == null || log.ExerciseId == exerciseId)
+            {
+                <tr>
+                    <td>@log.Exercise?.Name</td>
+                    <td>@log.SetNumber</td>
+                    <td>@log.Reps</td>
+                    <td>@log.Weight</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<a asp-action="Index" asp-route-workoutId="@Model.FirstOrDefault()?.WorkoutId" class="btn btn-secondary">Back to Log History</a>

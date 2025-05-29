@@ -80,7 +80,7 @@ namespace hyperTROPHYbuddy.Controllers
                 _context.Add(entry);
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("MyPlan", "WorkoutPlanAssignments");
         }
 
         // GET: ExerciseLogs/Index
@@ -101,19 +101,45 @@ namespace hyperTROPHYbuddy.Controllers
                 ViewBag.Exercises = workout?.WorkoutExercises.Select(we => we.Exercise).ToList();
             }
 
-            if (exerciseId.HasValue)
-            {
-                logsQuery = logsQuery.Where(l => l.ExerciseId == exerciseId.Value);
-                // Optionally pass exercise name to view
-                var exercise = await _exerciseService.GetByIdAsync(exerciseId.Value);
-                ViewBag.FilteredExerciseName = exercise?.Name;
-            }
-
-            var logs = logsQuery
-                .OrderByDescending(l => l.LoggedAt)
+            // Group logs by Workout and Date (date only, not time)
+            var groupedLogs = logsQuery
+                .AsEnumerable()
+                .GroupBy(l => new { l.WorkoutId, Date = l.LoggedAt.Date })
+                .Select(g => new
+                {
+                     WorkoutId = g.Key.WorkoutId,
+                     Date = g.Key.Date,
+                     WorkoutName = g.First().Workout?.Name,
+                     LogCount = g.Count()
+                })
+                .OrderByDescending(g => g.Date)
                 .ToList();
 
-            return View(logs);
+            return View("GroupedIndex", groupedLogs);
+        }
+        //Details Action To Show All Logs For A Workout On A Specific Date
+        public async Task<IActionResult> DetailsByDate(int workoutId, DateTime date, int? exerciseId = null)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var logs = _context.Set<ExerciseLog>()
+                .Include(l => l.Exercise)
+                .Include(l => l.Workout)
+                .Where(l => l.UserId == user.Id && l.WorkoutId == workoutId && l.LoggedAt.Date == date.Date)
+                .OrderBy(l => l.Exercise.Name).ThenBy(l => l.SetNumber)
+                .ToList();
+
+            ViewBag.Date = date;
+            ViewBag.WorkoutName = logs.FirstOrDefault()?.Workout?.Name;
+
+            // Populate exercises for filter dropdown
+            ViewBag.Exercises = logs
+                .Select(l => l.Exercise)
+                .Where(e => e != null)
+                .Distinct()
+                .OrderBy(e => e.Name)
+                .ToList();
+
+            return View("DetailsByDate", logs);
         }
     }
 
