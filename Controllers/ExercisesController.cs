@@ -71,7 +71,7 @@ namespace hyperTROPHYbuddy.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExerciseId,Name,Description,VideoLink")] Exercise exercise)
+        public async Task<IActionResult> Create([Bind("ExerciseId,Name,Description,VideoLink,TargetSets")] Exercise exercise)
         {
             if (ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace hyperTROPHYbuddy.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ExerciseId,Name,Description,VideoLink")] Exercise exercise)
+        public async Task<IActionResult> Edit(int id, [Bind("ExerciseId,Name,Description,VideoLink,TargetSets")] Exercise exercise)
         {
             if (id != exercise.ExerciseId)
                 return NotFound();

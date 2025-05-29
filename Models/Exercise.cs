@@ -11,6 +11,9 @@ namespace hyperTROPHYbuddy.Models
         public string Description { get; set; }
         public string? VideoLink { get; set; }
 
+        [Range(1, 10, ErrorMessage = "Target sets must be between 1 and 10.")]
+        public int TargetSets { get; set; }
+
         [ForeignKey("CreatedBy")]
         public string? CreatedByAdminId { get; set; }
         public ApplicationUser? CreatedBy { get; set; }
