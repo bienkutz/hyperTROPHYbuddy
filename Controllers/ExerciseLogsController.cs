@@ -54,11 +54,11 @@ namespace hyperTROPHYbuddy.Controllers
             // Server-side: group by ExerciseId and check for >5 sets
             var overLimit = flatLogs
                 .GroupBy(l => l.ExerciseId)
-                .Any(g => g.Count() > 5);
+                .Any(g => g.Count() > 10);
 
             if (overLimit)
             {
-                ModelState.AddModelError("", "You cannot log more than 5 sets per exercise.");
+                ModelState.AddModelError("", "You cannot log more than 10 sets per exercise.");
                 // Optionally, reload the workout/exercises for redisplay
                 var workout = await _workoutService.GetByIdAsync(workoutId);
                 ViewBag.Workout = workout;

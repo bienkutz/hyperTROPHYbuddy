@@ -81,7 +81,7 @@ namespace hyperTROPHYbuddy.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Name")] Workout workout, int[] SelectedExerciseIds)
+        public async Task<IActionResult> Create([Bind("Name")] Workout workout, int[] SelectedExerciseIds, Dictionary<int, int> TargetSets)
         {
             if (ModelState.IsValid)
             {
@@ -89,23 +89,23 @@ namespace hyperTROPHYbuddy.Controllers
                 workout.CreatedByAdminId = currentUser.Id;
                 await _workoutService.CreateAsync(workout);
 
-                // Add WorkoutExercise mappings
+                // Add WorkoutExercise mappings with TargetSets
                 if (SelectedExerciseIds != null && SelectedExerciseIds.Length > 0)
                 {
                     foreach (var exId in SelectedExerciseIds)
                     {
+                        int targetSets = 1;
+                        if (TargetSets != null && TargetSets.TryGetValue(exId, out var ts))
+                            targetSets = ts;
+
                         var workoutExercise = new WorkoutExercise
                         {
                             WorkoutId = workout.WorkoutId,
-                            ExerciseId = exId
+                            ExerciseId = exId,
+                            TargetSets = targetSets
                         };
-                        // Use your WorkoutExerciseService or DbContext here
-                        // Example:
                         await _workoutExerciseService.AddAsync(workoutExercise);
-                        // or, if using DbContext directly:
-                        //_context.Add(workoutExercise);
                     }
-                    //await _context.SaveChangesAsync();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -126,16 +126,13 @@ namespace hyperTROPHYbuddy.Controllers
             if (workout == null)
                 return NotFound();
 
-            // Get all exercises
             var allExercises = (await _exerciseService.GetAllAsync()).ToList();
-
-            // Get selected exercise IDs for this workout
-            var selectedExerciseIds = (await _workoutExerciseService.GetByWorkoutIdAsync(workout.WorkoutId))
-                .Select(we => we.ExerciseId)
-                .ToList();
+            var workoutExercises = (await _workoutExerciseService.GetByWorkoutIdAsync(workout.WorkoutId)).ToList();
+            var selectedExerciseIds = workoutExercises.Select(we => we.ExerciseId).ToList();
 
             ViewBag.Exercises = allExercises;
             ViewBag.SelectedExerciseIds = selectedExerciseIds;
+            ViewBag.WorkoutExercises = workoutExercises;
 
             return View(workout);
         }
@@ -144,7 +141,7 @@ namespace hyperTROPHYbuddy.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkoutId,Name")] Workout workout, int[] SelectedExerciseIds)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkoutId,Name")] Workout workout, int[] SelectedExerciseIds, Dictionary<int, int> TargetSets)
         {
             if (id != workout.WorkoutId)
                 return NotFound();
@@ -158,20 +155,22 @@ namespace hyperTROPHYbuddy.Controllers
                         return NotFound();
 
                     existingWorkout.Name = workout.Name;
-                    // Do NOT touch existingWorkout.CreatedByAdminId
-
                     await _workoutService.UpdateAsync(existingWorkout);
 
-                    // Remove and re-add exercises as before...
                     await _workoutExerciseService.RemoveAllForWorkoutAsync(existingWorkout.WorkoutId);
                     if (SelectedExerciseIds != null && SelectedExerciseIds.Length > 0)
                     {
                         foreach (var exId in SelectedExerciseIds)
                         {
+                            int targetSets = 1;
+                            if (TargetSets != null && TargetSets.TryGetValue(exId, out var ts))
+                                targetSets = ts;
+
                             var workoutExercise = new WorkoutExercise
                             {
                                 WorkoutId = existingWorkout.WorkoutId,
-                                ExerciseId = exId
+                                ExerciseId = exId,
+                                TargetSets = targetSets
                             };
                             await _workoutExerciseService.AddAsync(workoutExercise);
                         }
@@ -190,6 +189,7 @@ namespace hyperTROPHYbuddy.Controllers
             // Repopulate exercises if model state is invalid
             ViewBag.Exercises = (await _exerciseService.GetAllAsync()).ToList();
             ViewBag.SelectedExerciseIds = SelectedExerciseIds?.ToList() ?? new List<int>();
+            ViewBag.WorkoutExercises = (await _workoutExerciseService.GetByWorkoutIdAsync(id)).ToList();
             return View(workout);
         }
 

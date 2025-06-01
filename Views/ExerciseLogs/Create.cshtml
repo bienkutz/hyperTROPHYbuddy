@@ -2,11 +2,12 @@
     ViewData["Title"] = "Log Progress";
     var workout = ViewBag.Workout as hyperTROPHYbuddy.Models.Workout;
     var exercises = ViewBag.Exercises as List<hyperTROPHYbuddy.Models.Exercise>;
+    // Get target sets for each exercise (default to 5 if not available)
+    var targetSetsList = exercises.Select(e => e.WorkoutExercises?.FirstOrDefault()?.TargetSets ?? 5).ToList();
 }
 
 <h2>Log Progress for @workout?.Name</h2>
 
-<!-- Validation summary for server-side errors -->
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 <form asp-action="Create" method="post">
@@ -15,11 +16,16 @@
         @for (int i = 0; i < exercises.Count; i++)
         {
             var exercise = exercises[i];
+            var targetSets = targetSetsList[i];
             <div class="card mb-4" data-exercise-index="@i">
                 <div class="card-header">
                     <strong>@exercise.Name</strong>
+                    <span class="badge bg-info text-dark ms-2">Target: @targetSets sets</span>
                 </div>
                 <div class="card-body">
+                    <div class="target-achieved-msg text-success mb-2" id="target-achieved-@i" style="display:none;">
+                        <strong>Congrats! Target Achieved!</strong>
+                    </div>
                     <table class="table mb-0" id="sets-table-@i">
                         <thead>
                             <tr>
@@ -61,19 +67,32 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Get all target sets for each exercise
+            var targetSets = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(@targetSetsList));
+
             document.querySelectorAll('.add-set-btn').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var exerciseIndex = btn.getAttribute('data-exercise-index');
-                    var exerciseId = btn.getAttribute('data-exercise-id');
-                    var table = document.getElementById('sets-table-' + exerciseIndex).getElementsByTagName('tbody')[0];
+                var exerciseIndex = btn.getAttribute('data-exercise-index');
+                var target = targetSets[exerciseIndex];
+                var table = document.getElementById('sets-table-' + exerciseIndex).getElementsByTagName('tbody')[0];
+
+                function updateTargetMsg() {
                     var currentRows = table.getElementsByTagName('tr').length;
-                    if (currentRows >= 5) {
+                    var msg = document.getElementById('target-achieved-' + exerciseIndex);
+                    if (currentRows >= target) {
+                        msg.style.display = '';
+                    } else {
+                        msg.style.display = 'none';
+                    }
+                }
+
+                btn.addEventListener('click', function () {
+                    var currentRows = table.getElementsByTagName('tr').length;
+                    if (currentRows >= 10) {
                         btn.disabled = true;
-                        // Optionally show a message to the user
                         if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('set-limit-msg')) {
                             var msg = document.createElement('div');
                             msg.className = 'text-danger set-limit-msg';
-                            msg.innerText = 'Maximum 5 sets allowed per exercise.';
+                            msg.innerText = 'Maximum 10 sets allowed per exercise.';
                             btn.parentNode.appendChild(msg);
                         }
                         return;
@@ -82,7 +101,7 @@
                     var row = document.createElement('tr');
                     row.innerHTML =
                         '<td>' + setNumber +
-                        '<input type="hidden" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].ExerciseId" value="' + exerciseId + '" />' +
+                        '<input type="hidden" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].ExerciseId" value="' + btn.getAttribute('data-exercise-id') + '" />' +
                         '<input type="hidden" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].SetNumber" value="' + setNumber + '" />' +
                         '</td>' +
                         '<td><input type="number" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Reps" class="form-control" min="0" required />' +
@@ -96,9 +115,7 @@
                     // Attach remove event to the new button
                     row.querySelector('.remove-set-btn').addEventListener('click', function () {
                         row.remove();
-                        // Enable the add button if it was disabled
                         btn.disabled = false;
-                        // Remove set limit message if present
                         var msg = btn.parentNode.querySelector('.set-limit-msg');
                         if (msg) msg.remove();
                         // Re-number remaining set rows
@@ -107,32 +124,34 @@
                             tr.querySelector('td').childNodes[0].nodeValue = setNum;
                             tr.querySelector('input[name*=".SetNumber"]').value = setNum;
                         });
+                        updateTargetMsg();
                     });
 
-                    // Disable button if max sets reached
-                    if (setNumber === 5) {
+                    if (setNumber === 10) {
                         btn.disabled = true;
                         if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('set-limit-msg')) {
                             var msg = document.createElement('div');
                             msg.className = 'text-danger set-limit-msg';
-                            msg.innerText = 'Maximum 5 sets allowed per exercise.';
+                            msg.innerText = 'Maximum 10 sets allowed per exercise.';
                             btn.parentNode.appendChild(msg);
                         }
                     }
+                    updateTargetMsg();
                 });
 
-                // On load, disable button if already at max sets (should only be 1, but for safety)
-                var exerciseIndex = btn.getAttribute('data-exercise-index');
-                var table = document.getElementById('sets-table-' + exerciseIndex).getElementsByTagName('tbody')[0];
-                if (table.getElementsByTagName('tr').length >= 5) {
+                // On load, disable button if already at max sets
+                if (table.getElementsByTagName('tr').length >= 10) {
                     btn.disabled = true;
                     if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('set-limit-msg')) {
                         var msg = document.createElement('div');
                         msg.className = 'text-danger set-limit-msg';
-                        msg.innerText = 'Maximum 5 sets allowed per exercise.';
+                        msg.innerText = 'Maximum 10 sets allowed per exercise.';
                         btn.parentNode.appendChild(msg);
                     }
                 }
+
+                // Initial check
+                updateTargetMsg();
             });
         });
     </script>

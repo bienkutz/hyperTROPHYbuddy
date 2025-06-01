@@ -29,8 +29,9 @@
                 <div id="exerciseList">
                     @if (exercises != null)
                     {
-                        foreach (var ex in exercises)
+                        @for (int i = 0; i < exercises.Count; i++)
                         {
+                            var ex = exercises[i];
                             <div class="form-check exercise-item">
                                 <input class="form-check-input"
                                        type="checkbox"
@@ -40,6 +41,15 @@
                                 <label class="form-check-label" for="exercise_@ex.ExerciseId">
                                     @ex.Name
                                 </label>
+                                <input type="number"
+                                       class="form-control d-inline-block ms-2"
+                                       name="TargetSets[@ex.ExerciseId]"
+                                       id="targetSets_@ex.ExerciseId"
+                                       min="1"
+                                       max="10"
+                                       style="width: 80px;"
+                                       placeholder="Sets"
+                                       @(ViewContext.HttpContext.Request.Method == "POST" ? "" : "disabled") />
                             </div>
                         }
                     }
@@ -79,6 +89,19 @@
             searchInput.value = '';
             filterExercises();
             searchInput.focus();
+        });
+
+        function toggleTargetSetsInput(exId, enabled) {
+            document.getElementById('targetSets_' + exId).disabled = !enabled;
+        }
+        // On page load, disable all TargetSets inputs unless their checkbox is checked
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.form-check-input[type="checkbox"][name="SelectedExerciseIds"]').forEach(function (cb) {
+                toggleTargetSetsInput(cb.value, cb.checked);
+                cb.addEventListener('change', function () {
+                    toggleTargetSetsInput(cb.value, cb.checked);
+                });
+            });
         });
     </script>
 }
