@@ -25,6 +25,10 @@ namespace hyperTROPHYbuddy.Models
         [Required]
         public WorkoutPlanType Type { get; set; }
 
+        [ForeignKey("CreatedBy")]
+        public string? CreatedByAdminId { get; set; }
+        public ApplicationUser? CreatedBy { get; set; }
+
         // Navigation properties
         public ICollection<WorkoutPlanAssignment>? Assignments { get; set; } 
         public ICollection<WorkoutPlanWorkout>? WorkoutPlanWorkouts { get; set; }

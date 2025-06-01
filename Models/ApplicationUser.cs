@@ -17,8 +17,7 @@ namespace hyperTROPHYbuddy.Models
 
         public ICollection<Workout>? CreatedWorkouts { get; set; } 
         public ICollection<Exercise>? CreatedExercises { get; set; }
-
-
+        public ICollection<WorkoutPlan>? CreatedWorkoutPlans { get; set; }
 
     }
 }

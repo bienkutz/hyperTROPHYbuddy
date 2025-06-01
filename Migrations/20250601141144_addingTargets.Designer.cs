@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using hyperTROPHYbuddy.Data;
 
@@ -11,9 +12,11 @@ using hyperTROPHYbuddy.Data;
 namespace hyperTROPHYbuddy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250601141144_addingTargets")]
+    partial class addingTargets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -350,9 +353,6 @@ namespace hyperTROPHYbuddy.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkoutPlanId"));
 
-                    b.Property<string>("CreatedByAdminId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -365,8 +365,6 @@ namespace hyperTROPHYbuddy.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("WorkoutPlanId");
-
-                    b.HasIndex("CreatedByAdminId");
 
                     b.ToTable("WorkoutPlans");
                 });
@@ -539,16 +537,6 @@ namespace hyperTROPHYbuddy.Migrations
                     b.Navigation("Workout");
                 });
 
-            modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlan", b =>
-                {
-                    b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "CreatedBy")
-                        .WithMany("CreatedWorkoutPlans")
-                        .HasForeignKey("CreatedByAdminId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-                });
-
             modelBuilder.Entity("hyperTROPHYbuddy.Models.WorkoutPlanAssignment", b =>
                 {
                     b.HasOne("hyperTROPHYbuddy.Models.ApplicationUser", "Admin")
@@ -603,8 +591,6 @@ namespace hyperTROPHYbuddy.Migrations
                     b.Navigation("AssignedToMe");
 
                     b.Navigation("CreatedExercises");
-
-                    b.Navigation("CreatedWorkoutPlans");
 
                     b.Navigation("CreatedWorkouts");
                 });

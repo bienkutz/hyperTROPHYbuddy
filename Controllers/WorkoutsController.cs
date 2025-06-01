@@ -33,7 +33,9 @@ namespace hyperTROPHYbuddy.Controllers
         // GET: Workouts
         public async Task<IActionResult> Index(string search)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
             var workouts = await _workoutService.GetAllAsync();
+            workouts = workouts.Where(w => w.CreatedByAdminId == currentUser.Id);
             if (!string.IsNullOrWhiteSpace(search))
             {
                 workouts = workouts.Where(w => w.Name.Contains(search, StringComparison.OrdinalIgnoreCase));

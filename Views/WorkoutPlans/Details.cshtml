@@ -76,14 +76,27 @@ else
                                         @we.Exercise?.Name
                                         @if (we.Exercise != null)
                                         {
-                                            <a asp-controller="Exercises"
-                                               asp-action="ClientDetails"
-                                               asp-route-id="@we.Exercise.ExerciseId"
-                                               asp-route-workoutPlanId ="@Model.WorkoutPlanId"
-                                               class="btn btn-link btn-sm p-0 ms-2">
-                                                Details
-                                            </a>
-                                        }
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <a asp-controller="Exercises"
+                                                    asp-action="Details"
+                                                    asp-route-id="@we.Exercise.ExerciseId"
+                                                    asp-route-workoutPlanId ="@Model.WorkoutPlanId"
+                                                    class="btn btn-link btn-sm p-0 ms-2">
+                                                        Details
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-controller="Exercises"
+                                                       asp-action="ClientDetails"
+                                                       asp-route-id="@we.Exercise.ExerciseId"
+                                                       asp-route-workoutPlanId="@Model.WorkoutPlanId"
+                                                       class="btn btn-link btn-sm p-0 ms-2">
+                                                        Details
+                                                    </a>
+                                                }
+                                            }
                                     </li>
                                 }
                             </ul>

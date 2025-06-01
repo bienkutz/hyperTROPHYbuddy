@@ -60,6 +60,13 @@ namespace hyperTROPHYbuddy.Data
                 .WithMany(u => u.CreatedWorkouts)
                 .HasForeignKey(w => w.CreatedByAdminId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // WorkoutPlan relationships
+            builder.Entity<WorkoutPlan>()
+                .HasOne(wp => wp.CreatedBy)
+                .WithMany(u => u.CreatedWorkoutPlans)
+                .HasForeignKey(wp => wp.CreatedByAdminId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

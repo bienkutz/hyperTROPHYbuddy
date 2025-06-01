@@ -34,7 +34,10 @@ namespace hyperTROPHYbuddy.Controllers
         // GET: WorkoutPlans
         public async Task<IActionResult> Index(WorkoutPlanType? type)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
             var allPlans = await _workoutPlanService.GetAllAsync();
+            allPlans = allPlans.Where(p => p.CreatedByAdminId.Equals(currentUser.Id));
+
             if (type.HasValue)
             {
                 allPlans = allPlans.Where(p => p.Type == type.Value);
@@ -67,7 +70,7 @@ namespace hyperTROPHYbuddy.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.AdminUserName = await _userManager.GetUserAsync(User);
             return View(workoutPlan);
         }
 
@@ -92,9 +95,12 @@ namespace hyperTROPHYbuddy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(WorkoutPlan workoutPlan, int[] WorkoutIds, int[] Days)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
             if (ModelState.IsValid)
             {
-                // Save the plan and wait for the ID to be generated
+                // Set the admin who created the plan
+                workoutPlan.CreatedByAdminId = currentUser.Id;
+
                 await _workoutPlanService.CreateAsync(workoutPlan);
 
                 // Add each selected workout with its day
@@ -112,7 +118,6 @@ namespace hyperTROPHYbuddy.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var allWorkouts = await _workoutService.GetAllAsync();
-            var currentUser = await _userManager.GetUserAsync(User);
             ViewBag.Workouts = allWorkouts.Where(w => w.CreatedByAdminId == currentUser.Id)
                                           //.Select(w => new { workoutId = w.WorkoutId, name = w.Name })
                                           .ToList();
@@ -158,6 +163,9 @@ namespace hyperTROPHYbuddy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("WorkoutPlanId,Name,Description,Type")] WorkoutPlan workoutPlan, int[] SelectedWorkoutIds, int[] Days)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            workoutPlan.CreatedByAdminId = currentUser.Id;
+
             if (id != workoutPlan.WorkoutPlanId)
                 return NotFound();
 
@@ -195,7 +203,6 @@ namespace hyperTROPHYbuddy.Controllers
             }
 
             // Repopulate workouts if model state is invalid
-            var currentUser = await _userManager.GetUserAsync(User);
             var allWorkouts = (await _workoutService.GetAllAsync())
                 .Where(w => w.CreatedByAdminId == currentUser.Id)
                 .ToList();

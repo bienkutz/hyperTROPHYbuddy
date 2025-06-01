@@ -24,7 +24,7 @@
 <div>
     @if (ViewBag.WorkoutPlanId != null)
     {
-        <a asp-controller="WorkoutPlans" asp-action="Details" asp-route-id="@ViewBag.WorkoutPlanId">Back to Workout Plan</a>
+        <a asp-controller="WorkoutPlanAssignments" asp-action="MyPlan" class="btn btn-secondary">Back to my plan</a>
     }
     else
     {

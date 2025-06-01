@@ -34,6 +34,9 @@ namespace hyperTROPHYbuddy.Controllers
         public async Task<IActionResult> Index()
         {
             var assignments = await _assignmentService.GetAllAsync();
+            var currentUser = await _userManager.GetUserAsync(User);
+            assignments = assignments.Where(a => a.AssignedByAdminId == currentUser.Id);
+
             return View(assignments);
         }
 
@@ -58,7 +61,10 @@ namespace hyperTROPHYbuddy.Controllers
         public async Task<IActionResult> Create()
         {
             var users = await _userService.GetAllAsync();
+            var currentuser = await _userManager.GetUserAsync(User);
+
             var workoutPlans = await _workoutPlanService.GetAllAsync();
+            workoutPlans = workoutPlans.Where(wp => wp.CreatedByAdminId == currentuser.Id);
 
             // Use UserName for display, Id for value
             ViewData["AssignedToClientId"] = new SelectList(users, "Id", "UserName");
