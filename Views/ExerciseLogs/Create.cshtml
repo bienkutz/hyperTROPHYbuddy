@@ -18,12 +18,8 @@
             <div class="card mb-4" data-exercise-index="@i">
                 <div class="card-header">
                     <strong>@exercise.Name</strong>
-                    <span class="badge bg-info text-dark ms-2">Target: @exercise.TargetSets sets</span>
                 </div>
                 <div class="card-body">
-                    <div class="target-achieved-msg text-success" id="target-achieved-@i" style="display:none;">
-                        <strong>Congrats! Target Achieved</strong>
-                    </div>
                     <table class="table mb-0" id="sets-table-@i">
                         <thead>
                             <tr>
@@ -44,7 +40,7 @@
                                     <span class="text-danger field-validation-valid" data-valmsg-for="logs[@i][0].Reps" data-valmsg-replace="true"></span>
                                 </td>
                                 <td>
-                                    <input type="number" name="logs[@i][0].Weight" class="form-control" min="0" step="0.01" required pattern="^\d+(\.\d{1,2})?$" />
+                                    <input type="number" name="logs[@i][0].Weight" class="form-control" min="0" step="0.1" required />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="logs[@i][0].Weight" data-valmsg-replace="true"></span>
                                 </td>
                             </tr>
@@ -65,26 +61,11 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Get all target sets for each exercise
-            var targetSets = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(exercises.Select(e => e.TargetSets).ToList()));
-
             document.querySelectorAll('.add-set-btn').forEach(function (btn) {
-                var exerciseIndex = btn.getAttribute('data-exercise-index');
-                var exerciseId = btn.getAttribute('data-exercise-id');
-                var target = targetSets[exerciseIndex];
-                var table = document.getElementById('sets-table-' + exerciseIndex).getElementsByTagName('tbody')[0];
-
-                function updateTargetMsg() {
-                    var currentRows = table.getElementsByTagName('tr').length;
-                    var msg = document.getElementById('target-achieved-' + exerciseIndex);
-                    if (currentRows >= target) {
-                        msg.style.display = '';
-                    } else {
-                        msg.style.display = 'none';
-                    }
-                }
-
                 btn.addEventListener('click', function () {
+                    var exerciseIndex = btn.getAttribute('data-exercise-index');
+                    var exerciseId = btn.getAttribute('data-exercise-id');
+                    var table = document.getElementById('sets-table-' + exerciseIndex).getElementsByTagName('tbody')[0];
                     var currentRows = table.getElementsByTagName('tr').length;
                     if (currentRows >= 5) {
                         btn.disabled = true;
@@ -106,7 +87,7 @@
                         '</td>' +
                         '<td><input type="number" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Reps" class="form-control" min="0" required />' +
                         '<span class="text-danger field-validation-valid" data-valmsg-for="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Reps" data-valmsg-replace="true"></span></td>' +
-                        '<td><input type="number" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Weight" class="form-control" min="0" step="0.01" required pattern="^\\d+(\\.\\d{1,2})?$" />' +
+                        '<td><input type="number" name="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Weight" class="form-control" min="0" step="0.1" required />' +
                         '<span class="text-danger field-validation-valid" data-valmsg-for="logs[' + exerciseIndex + '][' + (setNumber - 1) + '].Weight" data-valmsg-replace="true"></span></td>' +
                         ' <button type="button" class="btn btn-danger btn-sm remove-set-btn ms-2" title="Remove this set">&times;</button></td>';
 
@@ -126,7 +107,6 @@
                             tr.querySelector('td').childNodes[0].nodeValue = setNum;
                             tr.querySelector('input[name*=".SetNumber"]').value = setNum;
                         });
-                        updateTargetMsg();
                     });
 
                     // Disable button if max sets reached
@@ -139,10 +119,11 @@
                             btn.parentNode.appendChild(msg);
                         }
                     }
-                    updateTargetMsg();
                 });
 
                 // On load, disable button if already at max sets (should only be 1, but for safety)
+                var exerciseIndex = btn.getAttribute('data-exercise-index');
+                var table = document.getElementById('sets-table-' + exerciseIndex).getElementsByTagName('tbody')[0];
                 if (table.getElementsByTagName('tr').length >= 5) {
                     btn.disabled = true;
                     if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('set-limit-msg')) {
@@ -152,9 +133,6 @@
                         btn.parentNode.appendChild(msg);
                     }
                 }
-
-                // Initial check
-                updateTargetMsg();
             });
         });
     </script>

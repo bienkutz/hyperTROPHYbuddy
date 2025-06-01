@@ -251,9 +251,6 @@ namespace hyperTROPHYbuddy.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TargetSets")
-                        .HasColumnType("int");
-
                     b.Property<string>("VideoLink")
                         .HasColumnType("nvarchar(max)");
 
