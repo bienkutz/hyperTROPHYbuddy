@@ -1,7 +1,8 @@
-using System.Diagnostics;
 using hyperTROPHYbuddy.Models;
 using hyperTROPHYbuddy.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Mono.TextTemplating;
+using System.Diagnostics;
 
 namespace hyperTROPHYbuddy.Controllers
 {
@@ -38,6 +39,7 @@ namespace hyperTROPHYbuddy.Controllers
                 return Redirect("/home");
             }
 
+            ModelState.AddModelError(string.Empty, "Invalid username or password.");
             return View(user);
         }
 

@@ -19,11 +19,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    options.Password.RequiredLength = 1;
+    options.Password.RequiredLength = 8;
     options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireDigit = false;
-    options.User.RequireUniqueEmail = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireDigit = true;
+    options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedAccount = false;
     options.User.AllowedUserNameCharacters =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";

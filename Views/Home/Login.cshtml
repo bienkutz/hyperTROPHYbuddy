@@ -11,6 +11,19 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h3 class="card-title text-center border-bottom">Login</h3>
+                    @{
+                        var hasError = ViewData.ModelState.Values.Any(v => v.Errors.Count > 0);
+                    }
+                    @if (hasError)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
                     <form asp-action="Login" method="post">
                         <div class="">
                             <label for="email" class="form-label"></label>
