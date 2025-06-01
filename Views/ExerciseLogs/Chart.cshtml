@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Workout Progress Chart";
+    var workoutId = Context.Request.Query["workoutId"];
+}
+
+<h2>Workout Progress Chart</h2>
+<a asp-action="Index" asp-route-workoutId="@workoutId" class="btn btn-secondary mb-3">Back to Progress</a>
+<div>
+    <canvas id="progressChart" height="100"></canvas>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var chartInstance = null;
+        function loadChartData() {
+            $.get('@Url.Action("GetChartData", "ExerciseLogs")', { workoutId: '@workoutId' }, function (vm) {
+                var exercises = vm.exercises;
+                var dates = vm.dates;
+                var chartData = vm.chartData;
+
+                var datasets = exercises.map(function (exName) {
+                    return {
+                        label: exName,
+                        data: dates.map(function (date) {
+                            var entry = chartData.find(x => x.exercise === exName && x.date === date);
+                            return entry ? entry.totalWeight : 0;
+                        }),
+                        fill: false,
+                        borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+                        tension: 0.1
+                    };
+                });
+
+                var ctx = document.getElementById('progressChart').getContext('2d');
+                if (chartInstance) chartInstance.destroy();
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Progress Over Time (Total Weight per Exercise)'
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        $(function () {
+            loadChartData();
+        });
+    </script>
+}

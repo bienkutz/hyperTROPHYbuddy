@@ -1,12 +1,14 @@
+using hyperTROPHYbuddy.Data;
 using hyperTROPHYbuddy.Models;
+using hyperTROPHYbuddy.Models.ViewModels;
 using hyperTROPHYbuddy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using hyperTROPHYbuddy.Data;
-using System.Collections.Generic;
 
 namespace hyperTROPHYbuddy.Controllers
 {
@@ -100,6 +102,13 @@ namespace hyperTROPHYbuddy.Controllers
                 ViewBag.FilteredWorkoutName = workout?.Name;
                 // Provide exercises for filter dropdown
                 ViewBag.Exercises = workout?.WorkoutExercises.Select(we => we.Exercise).ToList();
+                ViewBag.WorkoutId = workoutId.Value;
+            }
+            else
+            {
+                // If no workoutId is provided, try to set it to the first workout in the logs (if any)
+                var firstWorkoutId = logsQuery.Select(l => l.WorkoutId).FirstOrDefault();
+                ViewBag.WorkoutId = firstWorkoutId != 0 ? firstWorkoutId : (int?)null;
             }
 
             // Group logs by Workout and LoggedAt (date + hour + minute)
@@ -160,7 +169,76 @@ namespace hyperTROPHYbuddy.Controllers
 
             return View("DetailsByDate", logs);
         }
+
+        // GET: ExerciseLogs/Chart?workoutId=5
+        public async Task<IActionResult> Chart(int workoutId)
+        {
+            // Optionally, check if the workout exists and belongs to the user
+            var workout = await _workoutService.GetByIdAsync(workoutId);
+            if (workout == null)
+                return NotFound();
+
+            ViewBag.WorkoutId = workoutId;
+            ViewBag.WorkoutName = workout.Name;
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChartData(int? workoutId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            // Get all logs for the user
+            var logsQuery = _context.Set<ExerciseLog>()
+                .Include(l => l.Exercise)
+                .Where(l => l.UserId == user.Id);
+
+            // If workoutId is not provided, use the first available workout
+            if (!workoutId.HasValue)
+            {
+                workoutId = logsQuery.Select(l => l.WorkoutId).FirstOrDefault();
+                if (workoutId == 0)
+                {
+                    // No logs for this user, return empty chart data
+                    return Json(new WorkoutProgressChartViewModel
+                    {
+                        Exercises = new List<string>(),
+                        Dates = new List<string>(),
+                        ChartData = new List<WorkoutProgressChartViewModel.ChartEntry>()
+                    });
+                }
+            }
+
+            // Filter logs for the selected workout
+            var logs = await logsQuery
+                .Where(l => l.WorkoutId == workoutId.Value)
+                .ToListAsync();
+
+            var chartData = logs
+                .GroupBy(l => new { l.Exercise.Name, Date = l.LoggedAt.Date })
+                .Select(g => new WorkoutProgressChartViewModel.ChartEntry
+                {
+                    Exercise = g.Key.Name,
+                    Date = g.Key.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    TotalWeight = g.Sum(x => x.Weight * x.Reps)
+                })
+                .ToList();
+
+            var exercises = chartData.Select(x => x.Exercise).Distinct().ToList();
+            var dates = chartData.Select(x => x.Date).Distinct().OrderBy(d => d).ToList();
+
+            var vm = new WorkoutProgressChartViewModel
+            {
+                Exercises = exercises,
+                Dates = dates,
+                ChartData = chartData
+            };
+
+            return Json(vm);
+        }
     }
+
+
 
     // Helper input model for logging multiple sets
     public class ExerciseLogInputModel

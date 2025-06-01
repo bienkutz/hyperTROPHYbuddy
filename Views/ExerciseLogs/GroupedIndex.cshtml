@@ -1,9 +1,16 @@
 ﻿@model IEnumerable<dynamic>
 @{
     ViewData["Title"] = "My Exercise Log History";
+    int? workoutId = ViewBag.WorkoutId as int?;
 }
 
 <h2>My Exercise Log History</h2>
+
+
+@if (workoutId != null)
+{
+    <a class="btn btn-info mb-3" asp-action="Chart" asp-route-workoutId="@workoutId">Chart</a>
+}
 
 <table class="table">
     <thead>
