@@ -12,8 +12,8 @@ using hyperTROPHYbuddy.Data;
 namespace hyperTROPHYbuddy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250601164217_testCreate")]
-    partial class testCreate
+    [Migration("20250602135703_InitialRemake")]
+    partial class InitialRemake
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

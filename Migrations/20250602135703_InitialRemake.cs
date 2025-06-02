@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace hyperTROPHYbuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialRemake : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,7 @@ namespace hyperTROPHYbuddy.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastNotifiedWorkoutPlanAssignmentId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -51,20 +52,6 @@ namespace hyperTROPHYbuddy.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WorkoutPlans",
-                columns: table => new
-                {
-                    WorkoutPlanId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WorkoutPlans", x => x.WorkoutPlanId);
                 });
 
             migrationBuilder.CreateTable(
@@ -196,6 +183,28 @@ namespace hyperTROPHYbuddy.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WorkoutPlans",
+                columns: table => new
+                {
+                    WorkoutPlanId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    CreatedByAdminId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkoutPlans", x => x.WorkoutPlanId);
+                    table.ForeignKey(
+                        name: "FK_WorkoutPlans_AspNetUsers_CreatedByAdminId",
+                        column: x => x.CreatedByAdminId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Workouts",
                 columns: table => new
                 {
@@ -296,7 +305,8 @@ namespace hyperTROPHYbuddy.Migrations
                 columns: table => new
                 {
                     WorkoutId = table.Column<int>(type: "int", nullable: false),
-                    ExerciseId = table.Column<int>(type: "int", nullable: false)
+                    ExerciseId = table.Column<int>(type: "int", nullable: false),
+                    TargetSets = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -423,6 +433,11 @@ namespace hyperTROPHYbuddy.Migrations
                 name: "IX_WorkoutPlanAssignments_WorkoutPlanId1",
                 table: "WorkoutPlanAssignments",
                 column: "WorkoutPlanId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutPlans_CreatedByAdminId",
+                table: "WorkoutPlans",
+                column: "CreatedByAdminId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkoutPlanWorkout_WorkoutId",
