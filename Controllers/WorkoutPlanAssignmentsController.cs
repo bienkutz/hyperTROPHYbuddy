@@ -63,12 +63,22 @@ namespace hyperTROPHYbuddy.Controllers
             var users = await _userService.GetAllAsync();
             var currentuser = await _userManager.GetUserAsync(User);
 
+            var clients = await _userManager.GetUsersInRoleAsync("Client");
+            var filteredClients = new List<ApplicationUser>();
+            foreach (var user in clients)
+            {
+                if (!await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    filteredClients.Add(user);
+                }
+            }
+
             var workoutPlans = await _workoutPlanService.GetAllAsync();
             workoutPlans = workoutPlans.Where(wp => wp.CreatedByAdminId == currentuser.Id);
 
             // Use UserName for display, Id for value
-            ViewData["AssignedToClientId"] = new SelectList(users, "Id", "UserName");
-            ViewData["WorkoutPlanId"] = new SelectList(workoutPlans, "WorkoutPlanId", "Description");
+            ViewData["AssignedToClientId"] = new SelectList(filteredClients, "Id", "UserName");
+            ViewData["WorkoutPlanId"] = new SelectList(workoutPlans, "WorkoutPlanId", "Name");
             return View();
         }
 
@@ -96,11 +106,22 @@ namespace hyperTROPHYbuddy.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            var users = await _userService.GetAllAsync();
+            var currentuser = await _userManager.GetUserAsync(User);
+            var clients = await _userManager.GetUsersInRoleAsync("Client");
+            var filteredClients = new List<ApplicationUser>();
+            foreach (var user in clients)
+            {
+                if (!await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    filteredClients.Add(user);
+                }
+            }
             var workoutPlans = await _workoutPlanService.GetAllAsync();
+            workoutPlans = workoutPlans.Where(wp => wp.CreatedByAdminId == currentuser.Id);
 
-            ViewData["AssignedToClientId"] = new SelectList(users, "Id", "UserName", workoutPlanAssignment.AssignedToClientId);
-            ViewData["WorkoutPlanId"] = new SelectList(workoutPlans, "WorkoutPlanId", "Description", workoutPlanAssignment.WorkoutPlanId);
+
+            ViewData["AssignedToClientId"] = new SelectList(filteredClients, "Id", "UserName", workoutPlanAssignment.AssignedToClientId);
+            ViewData["WorkoutPlanId"] = new SelectList(workoutPlans, "WorkoutPlanId", "Name", workoutPlanAssignment.WorkoutPlanId);
             return View(workoutPlanAssignment);
         }
         /*

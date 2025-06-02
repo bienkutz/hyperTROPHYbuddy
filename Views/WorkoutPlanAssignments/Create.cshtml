@@ -18,12 +18,12 @@
 
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label asp-for="WorkoutPlanId" class="control-label"></label>
+        <label asp-for="WorkoutPlanId" class="control-label">Workout Plan Name</label>
         <select asp-for="WorkoutPlanId" class="form-control" asp-items="ViewBag.WorkoutPlanId"></select>
         <span asp-validation-for="WorkoutPlanId" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="AssignedToClientId" class="control-label"></label>
+        <label asp-for="AssignedToClientId" class="control-label">Client Id</label>
         <select asp-for="AssignedToClientId" class="form-control" asp-items="ViewBag.AssignedToClientId"></select>
         <span asp-validation-for="AssignedToClientId" class="text-danger"></span>
     </div>

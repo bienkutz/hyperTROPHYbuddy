@@ -43,9 +43,9 @@ namespace hyperTROPHYbuddy.Data
 
             builder.Entity<WorkoutPlanAssignment>()
                 .HasOne(wpa => wpa.WorkoutPlan)
-                .WithMany()
+                .WithMany(wp => wp.Assignments)
                 .HasForeignKey(wpa => wpa.WorkoutPlanId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Exercise relationships
             builder.Entity<Exercise>()
