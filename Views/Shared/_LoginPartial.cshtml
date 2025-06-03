@@ -3,23 +3,39 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
+<ul class="navbar-nav ms-auto">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-        </li>
-        <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Home" asp-action="Logout">Logout</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle me-1"></i>Hello @User.Identity?.Name!
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="fas fa-cog me-2"></i>My Account
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </li>
+            </ul>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Home" asp-action="Login">Login</a>
+            <a class="nav-link btn btn-outline-primary me-2 px-3" asp-controller="Home" asp-action="Login">
+                <i class="fas fa-sign-in-alt me-1"></i>Login
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Home" asp-action="SignUp">Register</a>
+            <a class="nav-link btn btn-primary px-3" asp-controller="Home" asp-action="SignUp">
+                <i class="fas fa-user-plus me-1"></i>Register
+            </a>
         </li>
     }
 </ul>

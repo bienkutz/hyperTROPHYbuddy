@@ -2,7 +2,139 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section rounded-lg shadow-lg fade-in">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="fw-bold">Your Journey to Strength Starts Here</h1>
+                <p class="lead mb-4">Track your workouts, monitor your progress, and achieve your fitness goals with hyperTROPHYbuddy - your ultimate fitness companion.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    @if (!User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Home" asp-action="SignUp" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a asp-controller="Home" asp-action="Login" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="WorkoutPlanAssignments" asp-action="MyPlan" class="btn btn-primary btn-lg">
+                            <i class="fas fa-dumbbell me-2"></i>My Workouts
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="text-center">
+                    <i class="fas fa-dumbbell fa-10x text-white opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card h-100 fade-in" style="animation-delay: 0.2s">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3 class="mt-4 mb-3">Personalized Plans</h3>
+                    <p>Get customized workout plans tailored to your fitness goals, experience level, and schedule.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100 fade-in" style="animation-delay: 0.4s">
+                <div class="card-body">
+                    <i class="fas fa-chart-line"></i>
+                    <h3 class="mt-4 mb-3">Track Progress</h3>
+                    <p>Log your workouts and monitor your progress with detailed charts and analytics.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100 fade-in" style="animation-delay: 0.6s">
+                <div class="card-body">
+                    <i class="fas fa-heartbeat"></i>
+                    <h3 class="mt-4 mb-3">Health Insights</h3>
+                    <p>Get comprehensive health reports and personalized recommendations to optimize your fitness journey.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">How It Works</h2>
+            <p class="lead">Simple steps to transform your fitness journey</p>
+        </div>
+    </div>
+    <div class="row justify-content-center g-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 fade-in" style="animation-delay: 0.2s">
+                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                    <i class="fas fa-user-plus fa-2x text-primary"></i>
+                </div>
+                <h4 class="fw-bold">1. Sign Up</h4>
+                <p class="text-muted">Create your account to get started on your fitness journey.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 fade-in" style="animation-delay: 0.4s">
+                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                    <i class="fas fa-clipboard-list fa-2x text-primary"></i>
+                </div>
+                <h4 class="fw-bold">2. Get a Plan</h4>
+                <p class="text-muted">Receive a personalized workout plan tailored to your goals.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 fade-in" style="animation-delay: 0.6s">
+                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                    <i class="fas fa-dumbbell fa-2x text-primary"></i>
+                </div>
+                <h4 class="fw-bold">3. Track Workouts</h4>
+                <p class="text-muted">Log your exercises and keep track of your progress.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 fade-in" style="animation-delay: 0.8s">
+                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                    <i class="fas fa-trophy fa-2x text-primary"></i>
+                </div>
+                <h4 class="fw-bold">4. Achieve Goals</h4>
+                <p class="text-muted">See results and celebrate your fitness achievements.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Animate elements when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+}

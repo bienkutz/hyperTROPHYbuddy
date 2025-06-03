@@ -1,75 +1,131 @@
 ﻿@model IEnumerable<hyperTROPHYbuddy.Models.Exercise>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Exercises";
     var search = ViewBag.Search as string;
 }
 
-<h1>Exercises</h1>
-
-@if (User.IsInRole("Admin"))
-{
-    <form id="searchForm" method="get" asp-action="Index" class="mb-3" style="max-width: 400px; position: relative;">
-        <div class="input-group" style="position: relative;">
-            <input type="text" name="search" class="form-control" placeholder="Search by name..." value="@search" autocomplete="off" />
-            <button type="submit" class="btn btn-outline-secondary">Search</button>
-            <div id="suggestions-container" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000;"></div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-dumbbell me-2 text-primary"></i>Exercises Library</h1>
+            <p class="text-muted lead">Browse and manage workout exercises</p>
         </div>
-    </form>
-}
-
-@if (!string.IsNullOrWhiteSpace(search))
-{
-    <div class="alert alert-info mb-3">
-        Showing results for: <strong>@search</strong>
-        <a asp-action="Index" class="btn btn-link btn-sm">Show all</a>
+        <div>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>Add New Exercise
+            </a>
+        </div>
     </div>
-}
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VideoLink)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                    @if (!string.IsNullOrWhiteSpace(item.VideoLink))
-                    {
-                        <a href="@item.VideoLink" target="_blank" rel="noopener">
-                            @item.VideoLink
-                        </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="card shadow-sm border-0 rounded-lg mb-4">
+            <div class="card-body">
+                <form id="searchForm" method="get" asp-action="Index" class="mb-0">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control border-start-0" 
+                               placeholder="Search exercises by name..." value="@search" autocomplete="off" />
+                        <button type="submit" class="btn btn-primary px-4">Search</button>
+                        @if (!string.IsNullOrWhiteSpace(search))
+                        {
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        }
+                    </div>
+                    <div id="suggestions-container" class="position-absolute mt-1 w-100 shadow-lg rounded-lg overflow-hidden" 
+                         style="z-index: 1000; display: none;"></div>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(search))
+    {
+        <div class="alert alert-info d-flex align-items-center mb-4 rounded-lg border-0 shadow-sm">
+            <i class="fas fa-info-circle me-2 fs-4"></i>
+            <div>
+                Showing results for: <strong>@search</strong>
+            </div>
+            <a asp-action="Index" class="btn btn-sm btn-outline-info ms-auto">
+                <i class="fas fa-undo me-1"></i>Show All
+            </a>
+        </div>
+    }
+
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="fw-bold text-uppercase">
+                                <i class="fas fa-tag me-1 text-primary"></i>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th class="fw-bold text-uppercase">
+                                <i class="fas fa-info-circle me-1 text-primary"></i>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th class="fw-bold text-uppercase">
+                                <i class="fas fa-video me-1 text-primary"></i>
+                                @Html.DisplayNameFor(model => model.VideoLink)
+                            </th>
+                            <th class="fw-bold text-uppercase text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td class="fw-medium">
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @if (item.Description?.Length > 100)
+                                {
+                                    @(item.Description.Substring(0, 100) + "...")
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.VideoLink))
+                                {
+                                    <a href="@item.VideoLink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt me-1"></i>Watch Video
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted"><i class="fas fa-times-circle me-1"></i>No video</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                     }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ExerciseId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ExerciseId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ExerciseId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    </tbody>                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
@@ -87,33 +143,40 @@
                 $.get('@Url.Action("Suggest", "Exercises")', { term: query }, function (data) {
                     $suggestionsContainer.empty();
                     if (data && data.length) {
+                        var $listGroup = $('<div class="list-group"></div>');
                         data.forEach(function (item) {
-                            var $item = $('<button type="button" class="list-group-item list-group-item-action w-100 text-start"></button>').text(item);
+                            var $item = $('<button type="button" class="list-group-item list-group-item-action border-0 d-flex align-items-center"></button>');
+                            $item.html('<i class="fas fa-search me-2 text-muted"></i>' + item);
                             $item.on('mousedown', function (e) {
                                 e.preventDefault();
                                 $search.val(item);
                                 $suggestionsContainer.empty().hide();
                                 $form.submit();
                             });
-                            $suggestionsContainer.append($item);
+                            $listGroup.append($item);
                         });
-                        $suggestionsContainer.show();
+                        $suggestionsContainer.append($listGroup).show();
                     } else {
                         $suggestionsContainer.hide();
                     }
                 });
+            });            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#searchForm').length) {
+                    $suggestionsContainer.empty().hide();
+                }
             });
-
-            // Hide suggestions when focus is lost
+            
             $search.on('blur', function () {
                 setTimeout(function () { $suggestionsContainer.hide(); }, 150);
             });
 
-            // Show suggestions when input is focused and has value
             $search.on('focus', function () {
                 if ($suggestionsContainer.children().length > 0) {
                     $suggestionsContainer.show();
                 }
+            });            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
     </script>

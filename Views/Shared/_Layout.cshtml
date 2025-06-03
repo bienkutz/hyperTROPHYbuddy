@@ -1,77 +1,133 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - hyperTROPHYbuddy</title>
     <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modern-fitness.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/hyperTROPHYbuddy.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="d-flex flex-column h-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">hyperTROPHYbuddy</a>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-dumbbell"></i>hyperTROPHYbuddy
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @if (User.IsInRole("Admin"))
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>                        @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="addNewDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Add new
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="addNewDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-plus-circle me-1"></i>Add New
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="addNewDropdown">
                                     <li>
-                                        <a class="dropdown-item" asp-controller="WorkoutPlans" asp-action="Create">Plan</a>
+                                        <a class="dropdown-item" asp-controller="WorkoutPlans" asp-action="Create">
+                                            <i class="fas fa-calendar-alt me-2"></i>Workout Plan
+                                        </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Create">Workout</a>
+                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Create">
+                                            <i class="fas fa-running me-2"></i>Workout
+                                        </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Exercises" asp-action="Create">Exercise</a>
+                                        <a class="dropdown-item" asp-controller="Exercises" asp-action="Create">
+                                            <i class="fas fa-dumbbell me-2"></i>Exercise
+                                        </a>
                                     </li>
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="WorkoutPlanAssignments" asp-action="Create">Assign a workout</a>
+                                <a class="nav-link" asp-controller="WorkoutPlanAssignments" asp-action="Create">
+                                    <i class="fas fa-tasks me-1"></i>Assign Workout
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="WorkoutPlans" asp-action="Index">
+                                    <i class="fas fa-clipboard-list me-1"></i>All Plans
+                                </a>
                             </li>
                         }
                         else if (User.IsInRole("Client"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="WorkoutPlanAssignments" asp-action="MyPlan">My workout plan</a>
+                        {                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="WorkoutPlanAssignments" asp-action="MyPlan">
+                                    <i class="fas fa-calendar-check me-1"></i>My Workout Plan
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="HealthReport" asp-action="Index">Health Report</a>
+                                <a class="nav-link" asp-controller="HealthReport" asp-action="Index">
+                                    <i class="fas fa-heartbeat me-1"></i>Health Report
+                                </a>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">
+                                <i class="fas fa-shield-alt me-1"></i>Privacy
+                            </a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </nav>    </header>
+    <div class="container flex-grow-1">
+        <main role="main" class="pb-5">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer mt-auto">
         <div class="container">
-            &copy; 2025 - hyperTROPHYbuddy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-white mb-3">hyperTROPHYbuddy</h5>
+                    <p class="mb-0">Your ultimate fitness companion on your journey to strength and health.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="text-white mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="text-white mb-3">Connect</h5>
+                    <div class="d-flex gap-3 fs-4">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 - hyperTROPHYbuddy - All Rights Reserved</p>
+                </div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
