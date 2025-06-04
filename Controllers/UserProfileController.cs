@@ -1,17 +1,26 @@
 ﻿using hyperTROPHYbuddy.Data;
 using hyperTROPHYbuddy.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace hyperTROPHYbuddy.Controllers
 {
+    [Authorize(Roles = "Client")]
     public class UserProfileController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
 
+        public UserProfileController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        {
+            _db = db;
+            _userManager = userManager;
+        }
         // Spoonacular supported diets (static for now, can be fetched from API if needed)
         private static readonly List<string> SpoonacularDiets = new List<string>
         {
@@ -29,25 +38,19 @@ namespace hyperTROPHYbuddy.Controllers
             "Whole30"
         };
 
-        public UserProfileController(ApplicationDbContext db)
-        {
-            _db = db;
-        }
 
         // GET: UserProfile/Edit/{userId}
-        public async Task<IActionResult> Edit(string userId)
+        public async Task<IActionResult> Edit()
         {
+            var currentUser = await _userManager.GetUserAsync(User);
             ViewBag.DietOptions = SpoonacularDiets;
-
-            if (string.IsNullOrEmpty(userId))
-                return View(new UserProfileModel());
 
             var user = await _db.UserProfiles
                 .Include(u => u.Allergies)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
+                .FirstOrDefaultAsync(u => u.UserId == currentUser.Id);
 
             if (user == null)
-                return View(new UserProfileModel { UserId = userId });
+                return View(new UserProfileModel { UserId = currentUser.Id });
 
             return View(new UserProfileModel
             {
@@ -60,13 +63,9 @@ namespace hyperTROPHYbuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(UserProfileModel model)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            model.UserId = currentUser.Id;
             ViewBag.DietOptions = SpoonacularDiets;
-
-            if (string.IsNullOrEmpty(model.UserId))
-            {
-                ModelState.AddModelError("", "User ID is required");
-                return View(model);
-            }
 
             var user = await _db.UserProfiles
                 .Include(u => u.Allergies)
@@ -91,7 +90,7 @@ namespace hyperTROPHYbuddy.Controllers
             await _db.SaveChangesAsync();
 
             // Reload to show updated allergies
-            return RedirectToAction(nameof(Edit), new { userId = model.UserId });
+            return RedirectToAction(nameof(Edit));
         }
     }
 

@@ -5,10 +5,8 @@
 }
 <h2>Edit User Profile</h2>
 <form asp-action="Edit" method="post">
-    <div>
-        <label>User ID:</label>
-        <input asp-for="UserId" />
-    </div>
+    <!-- UserId is not shown or editable -->
+    <input type="hidden" asp-for="UserId" />
     <div>
         <label>Diet Preference:</label>
         <select asp-for="DietPreference">

@@ -1,34 +1,41 @@
 ﻿using hyperTROPHYbuddy.Data;
 using hyperTROPHYbuddy.Models;
 using hyperTROPHYbuddy.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace hyperTROPHYbuddy.Controllers
 {
+    [Authorize(Roles = "Client")]
     public class MealPlanController : Controller
     {
         private const string MealCacheKey = "MealCache";
         private const int BatchSize = 10; // Number of recipes to cache per batch
 
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
         private readonly SpoonacularMealPlannerService _planner;
 
-        public MealPlanController(ApplicationDbContext db, SpoonacularMealPlannerService planner)
+        public MealPlanController(ApplicationDbContext db, SpoonacularMealPlannerService planner, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _planner = planner;
+            _userManager = userManager;
         }
 
         // GET: MealPlan/Request
-        public IActionResult Request(string userId = null, int? mealCalories = null, string mealType = null)
+        public async Task<IActionResult> Request(int? mealCalories = null, string mealType = null)
         {
-            var model = new SingleMealRequestViewModel();
-            if (!string.IsNullOrEmpty(userId))
-                model.UserId = userId;
+            var currentUser = await _userManager.GetUserAsync(User);
+            var model = new SingleMealRequestViewModel
+            {
+                UserId = currentUser.Id // Set, but do not show/edit in view
+            };
             if (mealCalories.HasValue)
                 model.MealCalories = mealCalories.Value;
             if (!string.IsNullOrEmpty(mealType))
@@ -39,9 +46,12 @@ namespace hyperTROPHYbuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> Request(SingleMealRequestViewModel model, bool generateAnother = false)
         {
-            if (string.IsNullOrEmpty(model.UserId) || model.MealCalories <= 0)
+            var currentUser = await _userManager.GetUserAsync(User);
+            model.UserId = currentUser.Id;
+
+            if (model.MealCalories <= 0)
             {
-                ViewBag.Message = "User ID and Meal Calories are required.";
+                ViewBag.Message = "Meal Calories are required.";
                 return View(model);
             }
 
@@ -102,8 +112,11 @@ namespace hyperTROPHYbuddy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Feedback(string userId, string mealId, bool liked, int mealCalories, string mealType)
+        public async Task<IActionResult> Feedback(string mealId, bool liked, int mealCalories, string mealType)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var userId = currentUser.Id;
+
             var user = await _db.UserProfiles
                 .Include(u => u.MealFeedbacks)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
@@ -121,7 +134,7 @@ namespace hyperTROPHYbuddy.Controllers
             await _db.SaveChangesAsync();
             TempData["Message"] = "Feedback saved!";
             // Re-request meal with same params
-            return RedirectToAction("Request", new { userId, mealCalories, mealType });
+            return RedirectToAction("Request", new { mealCalories, mealType });
         }
     }
 
