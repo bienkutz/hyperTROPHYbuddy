@@ -1,0 +1,37 @@
+﻿@model hyperTROPHYbuddy.Controllers.UserProfileModel
+@{
+    ViewData["Title"] = "Edit User Profile";
+    var dietOptions = ViewBag.DietOptions as List<string>;
+}
+<h2>Edit User Profile</h2>
+<form asp-action="Edit" method="post">
+    <div>
+        <label>User ID:</label>
+        <input asp-for="UserId" />
+    </div>
+    <div>
+        <label>Diet Preference:</label>
+        <select asp-for="DietPreference">
+            <option value="">No preference</option>
+            @if (dietOptions != null)
+            {
+                foreach (var diet in dietOptions)
+                {
+                    if (!string.IsNullOrWhiteSpace(diet))
+                    {
+                        <option value="@diet" selected="@(Model.DietPreference == diet ? "selected" : null)">@diet</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+    <div>
+        <label>Allergies (comma separated):</label>
+        <input asp-for="Allergies" placeholder="Leave blank if none" />
+    </div>
+    <button type="submit">Save</button>
+</form>
+@if (ViewBag.Message != null)
+{
+    <div>@ViewBag.Message</div>
+}

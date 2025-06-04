@@ -1,0 +1,45 @@
+﻿@model hyperTROPHYbuddy.Controllers.SingleMealRequestViewModel
+@{
+    ViewData["Title"] = "Meal Recommendation";
+}
+<h2>Meal Recommendation</h2>
+@if (Model.Meal != null)
+{
+    <div>
+        <strong>@Model.Meal.Label</strong> (@Model.Meal.Calories calories)<br />
+        <img src="@Model.Meal.Image" alt="Meal Image" width="100" /><br />
+        <a href="@Model.Meal.Url" target="_blank">View Recipe</a><br />
+        Feedback:
+        @if (Model.Meal.Feedback == true)
+        {
+            <span>Liked</span>
+        }
+        else if (Model.Meal.Feedback == false)
+        {
+            <span>Disliked</span>
+        }
+        else
+        {
+            <form asp-action="Feedback" method="post" style="display:inline;">
+                <input type="hidden" name="userId" value="@Model.UserId" />
+                <input type="hidden" name="mealId" value="@Model.Meal.MealId" />
+                <input type="hidden" name="mealCalories" value="@Model.MealCalories" />
+                <input type="hidden" name="mealType" value="@Model.MealType" />
+                <button name="liked" value="true">Like</button>
+                <button name="liked" value="false">Dislike</button>
+            </form>
+        }
+    </div>
+    <form asp-action="Request" method="post" style="margin-top:1em;">
+        <input type="hidden" name="UserId" value="@Model.UserId" />
+        <input type="hidden" name="MealCalories" value="@Model.MealCalories" />
+        <input type="hidden" name="MealType" value="@Model.MealType" />
+        <input type="hidden" name="generateAnother" value="true" />
+        <input type="hidden" name="Meal.MealId" value="@Model.Meal.MealId" />
+        <button type="submit">Show Another Meal</button>
+    </form>
+}
+@if (TempData["Message"] != null)
+{
+    <div>@TempData["Message"]</div>
+}

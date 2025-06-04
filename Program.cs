@@ -7,6 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Spoonacular
+builder.Services.AddHttpClient<SpoonacularMealPlannerService>();
+builder.Services.AddScoped<SpoonacularMealPlannerService>(sp =>
+{
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    var config = sp.GetRequiredService<IConfiguration>();
+    var apiKey = config["Spoonacular:ApiKey"] ?? throw new InvalidOperationException("Spoonacular:ApiKey is not configured.");
+    return new SpoonacularMealPlannerService(httpClient, apiKey);
+});
+
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -50,6 +61,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Client"));
 });
 
+builder.Services.AddSession();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -67,6 +79,8 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

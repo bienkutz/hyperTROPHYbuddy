@@ -15,7 +15,11 @@ namespace hyperTROPHYbuddy.Data
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<WorkoutPlan> WorkoutPlans { get; set; }
-        public DbSet<ExerciseLog> ExerciseLogs { get; set; }        
+        public DbSet<ExerciseLog> ExerciseLogs { get; set; }
+
+        public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<UserAllergy> UserAllergies { get; set; }
+        public DbSet<MealFeedback> MealFeedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
