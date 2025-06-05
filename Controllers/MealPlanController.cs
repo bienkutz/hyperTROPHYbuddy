@@ -119,11 +119,12 @@ namespace hyperTROPHYbuddy.Controllers
 
             var user = await _db.UserProfiles
                 .Include(u => u.MealFeedbacks)
+                .Include(u => u.Allergies)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
             if (user == null)
             {
-                TempData["Message"] = "User not found.";
-                return RedirectToAction("Request");
+                ViewBag.Message = "User not found.";
+                return View("SingleMeal", new SingleMealRequestViewModel { UserId = userId });
             }
             var feedback = user.MealFeedbacks.FirstOrDefault(f => f.MealId == mealId);
             if (feedback == null)
@@ -132,9 +133,30 @@ namespace hyperTROPHYbuddy.Controllers
                 feedback.Liked = liked;
 
             await _db.SaveChangesAsync();
-            TempData["Message"] = "Feedback saved!";
-            // Re-request meal with same params
-            return RedirectToAction("Request", new { mealCalories, mealType });
+
+            // Fetch meal details to display the same meal
+            var meal = await _planner.GetRecipeDetailsAsync(int.Parse(mealId));
+            var mealVm = new MealWithFeedbackViewModel
+            {
+                MealId = meal.Id.ToString(),
+                Label = meal.Title,
+                Image = $"https://spoonacular.com/recipeImages/{meal.Id}-312x231.{meal.ImageType}",
+                Calories = meal.Nutrition?.Nutrients?.FirstOrDefault(n => n.Name == "Calories")?.Amount ?? 0,
+                Ingredients = meal.ExtendedIngredients?.Select(i => i.OriginalString).ToList() ?? new List<string>(),
+                Url = meal.SourceUrl,
+                Feedback = liked
+            };
+
+            var model = new SingleMealRequestViewModel
+            {
+                UserId = userId,
+                MealCalories = mealCalories,
+                MealType = mealType,
+                Meal = mealVm
+            };
+
+            ViewBag.Message = "Feedback saved!";
+            return View("SingleMeal", model);
         }
     }
 
