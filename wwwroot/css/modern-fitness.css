@@ -32,6 +32,10 @@
   --transition-slow: all 0.5s ease;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   font-size: 16px;
   height: 100%;
@@ -57,21 +61,11 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--dark);
 }
 
-h1 {
-  font-size: 2.5rem;
-}
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
 
-h2 {
-  font-size: 2rem;
-}
-
-h3 {
-  font-size: 1.75rem;
-}
-
-p {
-  margin-bottom: 1rem;
-}
+p { margin-bottom: 1rem; }
 
 a {
   color: var(--secondary);
@@ -92,7 +86,7 @@ a:hover {
 }
 
 main {
-  flex: 1; 
+  flex: 1;
   padding: 2rem 0;
 }
 
@@ -205,6 +199,9 @@ main {
   box-shadow: var(--shadow-sm);
   border: none;
   margin: 0.5rem 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-sm {
@@ -300,6 +297,9 @@ main {
   padding: 0.75rem 1rem;
   border: 1px solid var(--gray-300);
   transition: var(--transition-fast);
+  height: 45px;
+  min-height: 45px;
+  max-height: 45px;
 }
 
 .form-control:focus {
@@ -317,6 +317,9 @@ main {
   padding: 0.75rem 1rem;
   border: 1px solid var(--gray-300);
   transition: var(--transition-fast);
+  height: 45px;
+  min-height: 45px;
+  max-height: 45px;
 }
 
 .form-select:focus {
@@ -603,4 +606,123 @@ input[name^="TargetSets"] {
 .form-floating > .form-control-plaintext:focus::placeholder, 
 .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-group .form-control,
+.input-group .form-select,
+.input-group .btn,
+.input-group .input-group-text {
+  height: 45px;
+  min-height: 45px;
+  max-height: 45px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.input-group .btn,
+.input-group .input-group-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--gray-300);
+}
+
+.input-group .btn {
+  border-left: none;
+  margin-top: 9px;
+}
+
+#toggle-password, .password-toggle {
+  border-left: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+}
+
+#toggle-password:focus, .password-toggle:focus {
+  box-shadow: none;
+  border-color: var(--primary);
+}
+
+.input-group input[type="search"] {
+  padding-right: 25px;
+}
+
+.input-group .form-control::-webkit-search-cancel-button {
+  position: relative;
+  right: 0;
+  cursor: pointer;
+  height: 20px;
+}
+
+.btn-back-to-list {
+  background-color: var(--secondary);
+  color: var(--white);
+  border: 1px solid var(--secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: var(--transition-fast);
+}
+
+.btn-back-to-list:hover {
+  background-color: #1976D2;
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1070;
+  font-family: var(--font-main);
+  font-size: 0.875rem;
+  opacity: 0;
+}
+
+.tooltip.show {
+  opacity: 0.9;
+}
+
+.tooltip-inner {
+  max-width: 200px;
+  padding: 0.25rem 0.5rem;
+  color: var(--white);
+  text-align: center;
+  background-color: var(--dark);
+  border-radius: var(--border-radius-sm);
+}
+
+.tooltip-arrow {
+  width: 0.8rem;
+  height: 0.4rem;
+}
+
+.tooltip-arrow::before {
+  content: "";
+  border-color: transparent;
+  border-style: solid;
+}
+
+.bs-tooltip-top, .bs-tooltip-auto[data-popper-placement^="top"] {
+  padding: 0.4rem 0;
+}
+
+.bs-tooltip-top .tooltip-arrow, .bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow {
+  bottom: 0;
+}
+
+.bs-tooltip-top .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+  top: 0;
+  border-width: 0.4rem 0.4rem 0;
+  border-top-color: var(--dark);
 }

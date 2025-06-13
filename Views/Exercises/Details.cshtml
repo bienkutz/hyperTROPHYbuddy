@@ -1,43 +1,64 @@
 ﻿@model hyperTROPHYbuddy.Models.Exercise
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Exercise Details";
 }
 
-<h1>Details</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-dumbbell me-2 text-primary"></i>Exercise Details</h1>
+            <p class="text-muted lead">View exercise information and instructions</p>
+        </div>
+    </div>
 
-<div>
-    <h4>Exercise</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VideoLink)
-        </dt>
-        <dd class = "col-sm-10">
-            
-            @if (!string.IsNullOrWhiteSpace(Model.VideoLink))
-            {
-                <a href="@Model.VideoLink" target="_blank" rel="noopener">
-                    @Model.VideoLink
-                </a>
-            }
-        </dd>
-        
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ExerciseId">Edit</a>
-    <a asp-action="Index">Back to List</a>
+    <div class="card shadow-sm border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-2">
+                    <i class="fas fa-dumbbell me-2 text-primary"></i>Exercise Name
+                </dt>
+                <dd class="col-sm-10">
+                    <strong>@Html.DisplayFor(model => model.Name)</strong>
+                </dd>
+                <dt class="col-sm-2">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>Description
+                </dt>
+                <dd class="col-sm-10">
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        @Html.DisplayFor(model => model.Description)
+                    }
+                    else
+                    {
+                        <span class="text-muted">No description available.</span>
+                    }
+                </dd>
+                <dt class="col-sm-2">
+                    <i class="fas fa-video me-2 text-primary"></i>Video Link
+                </dt>
+                <dd class="col-sm-10">
+                    @if (!string.IsNullOrWhiteSpace(Model.VideoLink))
+                    {
+                        <a href="@Model.VideoLink" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i>Watch Video
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No video available.</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model?.ExerciseId" class="btn btn-primary">
+            <i class="fas fa-edit me-2"></i>Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary ms-2">
+            <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
 </div>

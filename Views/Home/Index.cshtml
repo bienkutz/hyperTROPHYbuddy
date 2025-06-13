@@ -16,13 +16,21 @@
                         </a>
                         <a asp-controller="Home" asp-action="Login" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </a>
-                    }
+                        </a>                    }
                     else
                     {
-                        <a asp-controller="WorkoutPlanAssignments" asp-action="MyPlan" class="btn btn-primary btn-lg">
-                            <i class="fas fa-dumbbell me-2"></i>My Workouts
-                        </a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="WorkoutPlans" asp-action="Index" class="btn btn-primary btn-lg">
+                                <i class="fas fa-clipboard-list me-2"></i>My Plans
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="WorkoutPlanAssignments" asp-action="MyPlan" class="btn btn-primary btn-lg">
+                                <i class="fas fa-dumbbell me-2"></i>My Workouts
+                            </a>
+                        }
                     }
                 </div>
             </div>

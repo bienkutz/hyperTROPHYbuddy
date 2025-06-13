@@ -7,11 +7,17 @@
     var workoutDays = ViewBag.WorkoutDays as Dictionary<int, int> ?? new Dictionary<int, int>();
 }
 
-<h1>Edit</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i>Edit Workout Plan</h1>
+            <p class="text-muted lead">Update your workout plan</p>
+        </div>
+    </div>
 
-<h4>Workout Plan</h4>
-<hr />
-<div class="row">
+    <div class="card shadow-sm border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <div class="row">
     <div class="col-md-8 col-lg-6">
         <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -33,9 +39,8 @@
             </div>
             <h4 class="mt-4">Select Workouts and Assign Days</h4>
             <div class="input-group mb-2">
-                <input type="text" class="form-control" id="workoutSearch" placeholder="Search workouts..." autocomplete="off" />
-                <button type="button" class="btn btn-outline-secondary" id="resetWorkoutSearch" title="Show all workouts">
-                    &#x21bb;
+                <input type="text" class="form-control" id="workoutSearch" placeholder="Search workouts..." autocomplete="off" />                <button type="button" class="btn btn-outline-secondary" id="resetWorkoutSearch" title="Show all workouts">
+                    <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
             <table class="table table-bordered align-middle">
@@ -74,12 +79,17 @@
                     }
                 </tbody>
             </table>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to List</a>
-            </div>
-        </form>
+            <div class="mt-4">    <div class="action-button-container">
+        <input type="submit" value="Save Changes" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
     </div>
+</div>
+</form>
+        </div>
+    </div>
+</div>
 </div>
 
 @section Scripts {

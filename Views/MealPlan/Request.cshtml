@@ -2,32 +2,69 @@
 @{
     ViewData["Title"] = "Request Meal";
 }
-<h2>Request a Meal</h2>
-<form asp-action="Request" method="post">
-    <div>
-        <label>User ID:</label>
-        <input asp-for="UserId" />
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-utensils me-2 text-primary"></i>Request a Meal</h1>
+            <p class="text-muted lead">Get personalized meal recommendations</p>
+        </div>
     </div>
-    <div>
-        <label>Meal Calories:</label>
-        <input asp-for="MealCalories" />
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>Meal Request Form</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Request" method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="MealCalories" class="form-label fw-medium">
+                                <i class="fas fa-fire me-2 text-warning"></i>Meal Calories
+                            </label>
+                            <input asp-for="MealCalories" class="form-control" placeholder="Enter target calories (e.g., 500)" />
+                            <span asp-validation-for="MealCalories" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="MealType" class="form-label fw-medium">
+                                <i class="fas fa-clock me-2 text-info"></i>Meal Type (optional)
+                            </label>
+                            <select asp-for="MealType" class="form-select">
+                                <option value="">-- Any --</option>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="snack">Snack</option>
+                                <option value="main course">Main Course</option>
+                                <option value="side dish">Side Dish</option>
+                                <option value="dessert">Dessert</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search me-2"></i>Request Meal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <label>Meal Type (optional):</label>
-        <select asp-for="MealType">
-            <option value="">-- Any --</option>
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="snack">Snack</option>
-            <option value="main course">Main Course</option>
-            <option value="side dish">Side Dish</option>
-            <option value="dessert">Dessert</option>
-        </select>
-    </div>
-    <button type="submit">Request Meal</button>
-</form>
-@if (ViewBag.Message != null)
-{
-    <div>@ViewBag.Message</div>
-}
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8">
+                <div class="alert alert-info d-flex align-items-center rounded-lg border-0 shadow-sm">
+                    <i class="fas fa-info-circle me-2 fs-4"></i>
+                    <div>@ViewBag.Message</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

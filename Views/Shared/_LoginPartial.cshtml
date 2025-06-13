@@ -9,14 +9,7 @@
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-user-circle me-1"></i>Hello @User.Identity?.Name!
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li>
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
-                        <i class="fas fa-cog me-2"></i>My Account
-                    </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
+            </a>            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
                     <a class="dropdown-item" asp-controller="Home" asp-action="Logout">
                         <i class="fas fa-sign-out-alt me-2"></i>Logout

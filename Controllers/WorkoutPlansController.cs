@@ -32,7 +32,7 @@ namespace hyperTROPHYbuddy.Controllers
         }
 
         // GET: WorkoutPlans
-        public async Task<IActionResult> Index(WorkoutPlanType? type)
+        public async Task<IActionResult> Index(WorkoutPlanType? type, string search)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var allPlans = await _workoutPlanService.GetAllAsync();
@@ -41,6 +41,11 @@ namespace hyperTROPHYbuddy.Controllers
             if (type.HasValue)
             {
                 allPlans = allPlans.Where(p => p.Type == type.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                allPlans = allPlans.Where(p => p.Name != null && p.Name.ToLower().Contains(search.ToLower()));
             }
 
             // Pass available types for dropdown
@@ -54,6 +59,7 @@ namespace hyperTROPHYbuddy.Controllers
                                 }).ToList();
 
             ViewBag.SelectedType = type;
+            ViewBag.Search = search;
             return View(allPlans);
         }
 

@@ -5,9 +5,17 @@
     var workouts = ViewBag.Workouts as List<hyperTROPHYbuddy.Models.Workout>; // Use dynamic for anonymous types or strongly type if possible
 }
 
-<h1 class="mt-4 mb-4">Create Workout Plan</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i>Create Workout Plan</h1>
+            <p class="text-muted lead">Design a comprehensive workout plan</p>
+        </div>
+    </div>
 
-<div class="row">
+    <div class="card shadow-sm border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <div class="row">
     <div class="col-md-10 col-lg-8">
         <form asp-action="Create" method="post">
             <div class="form-group mb-3">
@@ -27,9 +35,8 @@
             </div>
             <h4 class="mt-4">Select Workouts and Assign Days</h4>
             <div class="input-group mb-2">
-                <input type="text" class="form-control" id="workoutSearch" placeholder="Search workouts..." autocomplete="off" />
-                <button type="button" class="btn btn-outline-secondary" id="resetWorkoutSearch" title="Show all workouts">
-                    &#x21bb;
+                <input type="text" class="form-control" id="workoutSearch" placeholder="Search workouts..." autocomplete="off" />                <button type="button" class="btn btn-outline-secondary" id="resetWorkoutSearch" title="Show all workouts">
+                    <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
             <table class="table table-bordered align-middle">
@@ -62,12 +69,17 @@
                     }
                 </tbody>
             </table>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to List</a>
-            </div>
-        </form>
+            <div class="mt-4">    <div class="action-button-container">
+        <input type="submit" value="Create" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
     </div>
+</div>
+</form>
+        </div>
+    </div>
+</div>
 </div>
 
 @section Scripts {

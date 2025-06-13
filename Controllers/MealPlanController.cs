@@ -153,9 +153,8 @@ namespace hyperTROPHYbuddy.Controllers
                 MealCalories = mealCalories,
                 MealType = mealType,
                 Meal = mealVm
-            };
-
-            ViewBag.Message = "Feedback saved!";
+            };            ViewBag.Message = "Feedback saved!";
+            TempData["FeedbackGiven"] = true;
             return View("SingleMeal", model);
         }
     }

@@ -8,104 +8,108 @@
     Func<int, int> getTargetSets = exId => workoutExercises.FirstOrDefault(we => we.ExerciseId == exId)?.TargetSets ?? 1;
 }
 
-<h1>Edit</h1>
-
-<h4>Workout</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="WorkoutId" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Exercises</label>
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="exerciseSearch" placeholder="Search exercises..." autocomplete="off" />
-                    <button type="button" class="btn btn-outline-secondary" id="resetExerciseSearch" title="Show all exercises">
-                        &#x21bb;
-                    </button>
-                </div>
-                <div id="exerciseList">
-                    @foreach (var ex in exercises)
-                    {
-                        var isChecked = selectedExerciseIds.Contains(ex.ExerciseId);
-                        <div class="form-check exercise-item mb-2">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   name="SelectedExerciseIds"
-                                   id="exercise_@ex.ExerciseId"
-                                   value="@ex.ExerciseId"
-                                   @(isChecked ? "checked" : "")
-                                   onchange="toggleTargetSetsInput(@ex.ExerciseId, this.checked)" />
-                            <label class="form-check-label" for="exercise_@ex.ExerciseId">
-                                @ex.Name
-                            </label>
-                            <input type="number"
-                                   class="form-control d-inline-block ms-2"
-                                   name="TargetSets[@ex.ExerciseId]"
-                                   id="targetSets_@ex.ExerciseId"
-                                   min="1"
-                                   max="10"
-                                   style="width: 80px;"
-                                   placeholder="Sets"
-                                   value="@(isChecked? getTargetSets(ex.ExerciseId) : "")"
-                                   @(isChecked ? "" : "disabled") />
-                        </div>
-                    }
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-running me-2 text-primary"></i>Edit Workout</h1>
+            <p class="text-muted lead">Customize your workout routine</p>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="card shadow-sm border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="WorkoutId" />
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Exercises</label>                <div class="input-group mb-2">
+                                <input type="text" class="form-control" id="exerciseSearch" placeholder="Search exercises..." autocomplete="off" />
+                                <button type="button" class="btn btn-outline-secondary" id="resetExerciseSearch" title="Show all exercises">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>                <div id="exerciseList">
+                                @foreach (var ex in exercises ?? new List<hyperTROPHYbuddy.Models.Exercise>())
+                                {
+                                    var isChecked = selectedExerciseIds.Contains(ex.ExerciseId);
+                                    <div class="form-check exercise-item mb-2">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="SelectedExerciseIds"
+                                               id="exercise_@ex.ExerciseId"
+                                               value="@ex.ExerciseId"
+                                               @(isChecked ? "checked" : "")
+                                               onchange="toggleTargetSetsInput(@ex.ExerciseId, this.checked)" />
+                                        <label class="form-check-label" for="exercise_@ex.ExerciseId">
+                                            @ex.Name
+                                        </label>
+                                        <input type="number"
+                                               class="form-control d-inline-block ms-2"
+                                               name="TargetSets[@ex.ExerciseId]"
+                                               id="targetSets_@ex.ExerciseId"
+                                               min="1"
+                                               max="10"
+                                               style="width: 80px;"
+                                               placeholder="Sets"
+                                               value="@(isChecked? getTargetSets(ex.ExerciseId) : "")"
+                                               @(isChecked ? "" : "disabled") />
+                                    </div>
+                                }
+                            </div>
+                        </div>            <div class="mt-4">
+                                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                                <a asp-action="Index" class="btn btn-secondary mt-3">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                                </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        const searchInput = document.getElementById('exerciseSearch');
-        const resetBtn = document.getElementById('resetExerciseSearch');
-        const items = document.querySelectorAll('#exerciseList .exercise-item');
+        <script>
+            const searchInput = document.getElementById('exerciseSearch');
+            const resetBtn = document.getElementById('resetExerciseSearch');
+            const items = document.querySelectorAll('#exerciseList .exercise-item');
 
-        function filterExercises() {
-            var filter = searchInput.value.toLowerCase();
-            items.forEach(function (item) {
-                var label = item.textContent || item.innerText;
-                item.style.display = label.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+            function filterExercises() {
+                var filter = searchInput.value.toLowerCase();
+                items.forEach(function (item) {
+                    var label = item.textContent || item.innerText;
+                    item.style.display = label.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+                });
+            }
+
+            searchInput.addEventListener('input', filterExercises);
+
+            resetBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                filterExercises();
+                searchInput.focus();
             });
-        }
-
-        searchInput.addEventListener('input', filterExercises);
-
-        resetBtn.addEventListener('click', function () {
-            searchInput.value = '';
-            filterExercises();
-            searchInput.focus();
-        });
-    </script>
-    <script>
-        function toggleTargetSetsInput(exId, enabled) {
-            document.getElementById('targetSets_' + exId).disabled = !enabled;
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.form-check-input[type="checkbox"][name="SelectedExerciseIds"]').forEach(function (cb) {
-                toggleTargetSetsInput(cb.value, cb.checked);
-                cb.addEventListener('change', function () {
+        </script>
+        <script>
+            function toggleTargetSetsInput(exId, enabled) {
+                document.getElementById('targetSets_' + exId).disabled = !enabled;
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.form-check-input[type="checkbox"][name="SelectedExerciseIds"]').forEach(function (cb) {
                     toggleTargetSetsInput(cb.value, cb.checked);
+                    cb.addEventListener('change', function () {
+                        toggleTargetSetsInput(cb.value, cb.checked);
+                    });
                 });
             });
-        });
-    </script>
+        </script>
 }

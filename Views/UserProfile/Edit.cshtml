@@ -3,33 +3,77 @@
     ViewData["Title"] = "Edit User Profile";
     var dietOptions = ViewBag.DietOptions as List<string>;
 }
-<h2>Edit User Profile</h2>
-<form asp-action="Edit" method="post">
-    <!-- UserId is not shown or editable -->
-    <input type="hidden" asp-for="UserId" />
-    <div>
-        <label>Diet Preference:</label>
-        <select asp-for="DietPreference">
-            <option value="">No preference</option>
-            @if (dietOptions != null)
-            {
-                foreach (var diet in dietOptions)
-                {
-                    if (!string.IsNullOrWhiteSpace(diet))
-                    {
-                        <option value="@diet" selected="@(Model.DietPreference == diet ? "selected" : null)">@diet</option>
-                    }
-                }
-            }
-        </select>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-user-edit me-2 text-primary"></i>Edit User Profile</h1>
+            <p class="text-muted lead">Update your dietary preferences and allergies</p>
+        </div>
     </div>
-    <div>
-        <label>Allergies (comma separated):</label>
-        <input asp-for="Allergies" placeholder="Leave blank if none" />
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Profile Settings</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="DietPreference" class="form-label fw-medium">
+                                <i class="fas fa-leaf me-2 text-success"></i>Diet Preference
+                            </label>
+                            <select asp-for="DietPreference" class="form-select">
+                                <option value="">No preference</option>
+                                @if (dietOptions != null)
+                                {
+                                    foreach (var diet in dietOptions)
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(diet))
+                                        {
+                                            <option value="@diet" selected="@(Model.DietPreference == diet ? "selected" : null)">@diet</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Allergies" class="form-label fw-medium">
+                                <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Allergies
+                            </label>
+                            <input asp-for="Allergies" class="form-control" placeholder="Enter allergies separated by commas (e.g., nuts, dairy, gluten)" />
+                            <div class="form-text">Leave blank if you have no known allergies</div>
+                            <span asp-validation-for="Allergies" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <button type="submit">Save</button>
-</form>
-@if (ViewBag.Message != null)
-{
-    <div>@ViewBag.Message</div>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8">
+                <div class="alert alert-success d-flex align-items-center rounded-lg border-0 shadow-sm">
+                    <i class="fas fa-check-circle me-2 fs-4"></i>
+                    <div>@ViewBag.Message</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

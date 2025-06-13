@@ -39,30 +39,25 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="addNewDropdown">
                                     <li>
-                                        <a class="dropdown-item" asp-controller="WorkoutPlans" asp-action="Create">
-                                            <i class="fas fa-calendar-alt me-2"></i>Workout Plan
+                                        <a class="dropdown-item" asp-controller="Exercises" asp-action="Index">
+                                            <i class="fas fa-dumbbell me-2"></i>Exercise
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Create">
+                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Index">
                                             <i class="fas fa-running me-2"></i>Workout
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Exercises" asp-action="Create">
-                                            <i class="fas fa-dumbbell me-2"></i>Exercise
+                                        <a class="dropdown-item" asp-controller="WorkoutPlans" asp-action="Index">
+                                            <i class="fas fa-calendar-alt me-2"></i>Workout Plan
                                         </a>
                                     </li>
                                 </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="WorkoutPlanAssignments" asp-action="Create">
-                                    <i class="fas fa-tasks me-1"></i>Assign Workout
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="WorkoutPlans" asp-action="Index">
-                                    <i class="fas fa-clipboard-list me-1"></i>All Plans
+                                    <i class="fas fa-tasks me-1"></i>Assign Workout Plans
                                 </a>
                             </li>
                         }
@@ -118,26 +113,15 @@
                 <div class="col-md-6">
                     <h5 class="text-white mb-3">hyperTROPHYbuddy</h5>
                     <p class="mb-0">Your ultimate fitness companion on your journey to strength and health.</p>
-                </div>
-                <div class="col-md-3">
+                </div>                <div class="col-md-3">
                     <h5 class="text-white mb-3">Quick Links</h5>
                     <ul class="list-unstyled">
                         <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                         <li><a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
-                        }
                     </ul>
                 </div>
                 <div class="col-md-3">
-                    <h5 class="text-white mb-3">Connect</h5>
-                    <div class="d-flex gap-3 fs-4">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
+                    <!-- Social media links removed -->
                 </div>
             </div>
             <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">

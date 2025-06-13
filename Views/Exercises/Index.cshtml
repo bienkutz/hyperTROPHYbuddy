@@ -21,18 +21,17 @@
     @if (User.IsInRole("Admin"))
     {
         <div class="card shadow-sm border-0 rounded-lg mb-4">
-            <div class="card-body">
-                <form id="searchForm" method="get" asp-action="Index" class="mb-0">
+            <div class="card-body">                <form id="searchForm" method="get" asp-action="Index" class="mb-0">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0">
                             <i class="fas fa-search text-muted"></i>
                         </span>
                         <input type="text" name="search" class="form-control border-start-0" 
                                placeholder="Search exercises by name..." value="@search" autocomplete="off" />
-                        <button type="submit" class="btn btn-primary px-4">Search</button>
+                        <button type="submit" class="btn btn-primary">Search</button>
                         @if (!string.IsNullOrWhiteSpace(search))
                         {
-                            <a asp-action="Index" class="btn btn-outline-secondary">
+                            <a asp-action="Index" class="btn btn-outline-secondary margin-bottom-16">
                                 <i class="fas fa-times"></i>
                             </a>
                         }
@@ -174,9 +173,15 @@
                 if ($suggestionsContainer.children().length > 0) {
                     $suggestionsContainer.show();
                 }
-            });            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            });            // Initialize tooltips with proper positioning
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top',
+                    container: 'body',
+                    boundary: 'viewport',
+                    offset: [0, 8]
+                });
             });
         });
     </script>
