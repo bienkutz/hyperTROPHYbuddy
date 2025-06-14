@@ -21,12 +21,13 @@
     @if (User.IsInRole("Admin"))
     {
         <div class="card shadow-sm border-0 rounded-lg mb-4">
-            <div class="card-body">                <form id="searchForm" method="get" asp-action="Index" class="mb-0">
+            <div class="card-body">
+                <form id="searchForm" method="get" asp-action="Index" class="mb-0">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0">
                             <i class="fas fa-search text-muted"></i>
                         </span>
-                        <input type="text" name="search" class="form-control border-start-0" 
+                        <input type="text" name="search" class="form-control border-start-0"
                                placeholder="Search exercises by name..." value="@search" autocomplete="off" />
                         <button type="submit" class="btn btn-primary">Search</button>
                         @if (!string.IsNullOrWhiteSpace(search))
@@ -36,12 +37,13 @@
                             </a>
                         }
                     </div>
-                    <div id="suggestions-container" class="position-absolute mt-1 w-100 shadow-lg rounded-lg overflow-hidden" 
-                         style="z-index: 1000; display: none;"></div>
                 </form>
             </div>
         </div>
     }
+
+    <!-- Suggestions container placed OUTSIDE of any card -->
+    <div id="suggestions-container" style="display: none; position: absolute; z-index: 9999;"></div>
 
     @if (!string.IsNullOrWhiteSpace(search))
     {
@@ -78,49 +80,51 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach (var item in Model) {
-                        <tr>
-                            <td class="fw-medium">
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </td>
-                            <td>
-                                @if (item.Description?.Length > 100)
-                                {
-                                    @(item.Description.Substring(0, 100) + "...")
-                                }
-                                else
-                                {
-                                    @Html.DisplayFor(modelItem => item.Description)
-                                }
-                            </td>
-                            <td>
-                                @if (!string.IsNullOrWhiteSpace(item.VideoLink))
-                                {
-                                    <a href="@item.VideoLink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-external-link-alt me-1"></i>Watch Video
-                                    </a>
-                                }
-                                else
-                                {
-                                    <span class="text-muted"><i class="fas fa-times-circle me-1"></i>No video</span>
-                                }
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a asp-action="Edit" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a asp-action="Details" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>                </table>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-medium">
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @if (item.Description?.Length > 100)
+                                    {
+                                        @(item.Description.Substring(0, 100) + "...")
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.VideoLink))
+                                    {
+                                        <a href="@item.VideoLink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-external-link-alt me-1"></i>Watch Video
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted"><i class="fas fa-times-circle me-1"></i>No video</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.ExerciseId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -133,12 +137,26 @@
             var $form = $('#searchForm');
             var $suggestionsContainer = $('#suggestions-container');
 
+            // Position suggestions under the search box
+            function positionSuggestions() {
+                var inputPos = $search.offset();
+                var inputWidth = $search.outerWidth();
+
+                $suggestionsContainer.css({
+                    position: 'absolute',
+                    top: (inputPos.top + $search.outerHeight()) + 'px',
+                    left: inputPos.left + 'px',
+                    width: inputWidth + 'px'
+                });
+            }
+
             $search.on('input', function () {
                 var query = $(this).val();
                 if (query.length < 1) {
                     $suggestionsContainer.empty().hide();
                     return;
                 }
+
                 $.get('@Url.Action("Suggest", "Exercises")', { term: query }, function (data) {
                     $suggestionsContainer.empty();
                     if (data && data.length) {
@@ -154,26 +172,36 @@
                             });
                             $listGroup.append($item);
                         });
-                        $suggestionsContainer.append($listGroup).show();
+                        $suggestionsContainer.append($listGroup);
+                        positionSuggestions(); // Position before showing
+                        $suggestionsContainer.show();
                     } else {
                         $suggestionsContainer.hide();
                     }
                 });
-            });            $(document).on('click', function (e) {
-                if (!$(e.target).closest('#searchForm').length) {
-                    $suggestionsContainer.empty().hide();
+            });
+
+            // Handle window resize and scrolling
+            $(window).on('resize scroll', function() {
+                if ($suggestionsContainer.is(':visible')) {
+                    positionSuggestions();
                 }
             });
-            
-            $search.on('blur', function () {
-                setTimeout(function () { $suggestionsContainer.hide(); }, 150);
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#searchForm, #suggestions-container').length) {
+                    $suggestionsContainer.empty().hide();
+                }
             });
 
             $search.on('focus', function () {
                 if ($suggestionsContainer.children().length > 0) {
+                    positionSuggestions();
                     $suggestionsContainer.show();
                 }
-            });            // Initialize tooltips with proper positioning
+            });
+
+            // Initialize tooltips with proper positioning
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl, {
@@ -187,21 +215,27 @@
     </script>
     <style>
         #suggestions-container {
-            display: none;
             background: #fff;
             border: 1px solid #ced4da;
-            border-top: none;
             border-radius: 0 0 .375rem .375rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            max-height: 200px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            max-height: 300px;
             overflow-y: auto;
+            z-index: 9999;
         }
-        #suggestions-container .list-group-item {
-            cursor: pointer;
-        }
-        #suggestions-container .list-group-item:hover,
-        #suggestions-container .list-group-item:focus {
-            background-color: #f8f9fa;
-        }
+
+            #suggestions-container .list-group {
+                margin-bottom: 0;
+            }
+
+            #suggestions-container .list-group-item {
+                cursor: pointer;
+                padding: .75rem 1rem;
+            }
+
+                #suggestions-container .list-group-item:hover,
+                #suggestions-container .list-group-item:focus {
+                    background-color: #f8f9fa;
+                }
     </style>
 }

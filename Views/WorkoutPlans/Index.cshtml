@@ -24,44 +24,50 @@
     {
         <div class="card shadow-sm border-0 rounded-lg mb-4">
             <div class="card-body">
-                <form id="searchForm" method="get" asp-action="Index" class="mb-3">                    <div class="d-flex">
-                        <div class="input-group me-2">
-                            <span class="input-group-text bg-light border-end-0">
-                                <i class="fas fa-search text-muted"></i>
-                            </span>
-                            <input type="text" name="search" class="form-control border-start-0" 
-                                  placeholder="Search workout plans by name..." value="@search" autocomplete="off" />
-                            <button type="submit" class="btn btn-primary">Search</button>
-                            @if (!string.IsNullOrWhiteSpace(search))
-                            {
-                                <a asp-action="Index" asp-route-type="@selectedType" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            }
-                        </div>
-                        <div class="input-group" style="max-width: 240px;">
-                            <span class="input-group-text bg-light border-end-0">
-                                <i class="fas fa-filter text-muted"></i>
-                            </span>
-                            <select name="type" class="form-select border-start-0" onchange="this.form.submit()">
-                            <option value="">All Types</option>
-                            @if (types != null)
-                            {
-                                foreach (var t in types)
+                <form id="searchForm" method="get" asp-action="Index">
+                    <div class="row">
+                        <div class="col-md-8 mb-2 mb-md-0">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" name="search" class="form-control border-start-0"
+                                       placeholder="Search workout plans by name..." value="@search" autocomplete="off" />
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                @if (!string.IsNullOrWhiteSpace(search))
                                 {
-                                    <option value="@t.Value" selected="@(t.Selected ? "selected" : null)">
-                                        @t.Text
-                                    </option>
+                                    <a asp-action="Index" asp-route-type="@selectedType" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times"></i>
+                                    </a>
                                 }
-                            }
-                        </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-filter text-muted"></i>
+                                </span>
+                                <select name="type" class="form-select border-start-0" onchange="this.form.submit()">
+                                    <option value="">All Types</option>
+                                    @if (types != null)
+                                    {
+                                        foreach (var t in types)
+                                        {
+                                            <option value="@t.Value" selected="@(t.Selected ? "selected" : null)">
+                                                @t.Text
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div id="suggestions-container" class="position-absolute mt-1 w-100 shadow-lg rounded-lg overflow-hidden" 
-                         style="z-index: 1000; display: none;"></div>
+
                     @if (!string.IsNullOrWhiteSpace(search) || selectedType != null)
                     {
                         <div class="mt-3">
                             <small class="text-muted">
+                                Active filters:
                                 @if (!string.IsNullOrWhiteSpace(search))
                                 {
                                     <span class="badge bg-info me-2">Search: "@search"</span>
@@ -81,7 +87,10 @@
         </div>
     }
 
-    <div class="card shadow-sm border-0 rounded-lg">
+    <!-- Suggestions container placed OUTSIDE of any card -->
+    <div id="suggestions-container" style="display: none; position: absolute; z-index: 9999;"></div>
+
+    <div class="card shadow-lg border-0 rounded-lg">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -97,36 +106,36 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                        <tr class="border-bottom">
-                            <td class="ps-4 py-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                         style="width: 40px; height: 40px;">
-                                        <i class="fas fa-calendar-alt text-primary"></i>
+                            <tr class="border-bottom">
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3"
+                                             style="width: 40px; height: 40px;">
+                                            <i class="fas fa-calendar-alt text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-medium">@Html.DisplayFor(modelItem => item.Name)</h6>
+                                            <small class="text-muted">@Html.DisplayFor(modelItem => item.Description)</small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6 class="mb-0 fw-medium">@Html.DisplayFor(modelItem => item.Name)</h6>
-                                        <small class="text-muted">@Html.DisplayFor(modelItem => item.Description)</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@Html.DisplayFor(modelItem => item.Type)</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.WorkoutPlanId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.WorkoutPlanId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.WorkoutPlanId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary">@Html.DisplayFor(modelItem => item.Type)</span>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a asp-action="Edit" asp-route-id="@item.WorkoutPlanId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a asp-action="Details" asp-route-id="@item.WorkoutPlanId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.WorkoutPlanId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -142,12 +151,26 @@
             var $form = $('#searchForm');
             var $suggestionsContainer = $('#suggestions-container');
 
+            // Position suggestions under the search box
+            function positionSuggestions() {
+                var inputPos = $search.offset();
+                var inputWidth = $search.outerWidth();
+
+                $suggestionsContainer.css({
+                    position: 'absolute',
+                    top: (inputPos.top + $search.outerHeight()) + 'px',
+                    left: inputPos.left + 'px',
+                    width: inputWidth + 'px'
+                });
+            }
+
             $search.on('input', function () {
                 var query = $(this).val();
                 if (query.length < 1) {
                     $suggestionsContainer.empty().hide();
                     return;
                 }
+
                 $.get('@Url.Action("Suggest", "WorkoutPlans")', { term: query }, function (data) {
                     $suggestionsContainer.empty();
                     if (data && data.length) {
@@ -163,22 +186,36 @@
                             });
                             $listGroup.append($item);
                         });
-                        $suggestionsContainer.append($listGroup).show();
+                        $suggestionsContainer.append($listGroup);
+                        positionSuggestions(); // Position before showing
+                        $suggestionsContainer.show();
                     } else {
                         $suggestionsContainer.hide();
                     }
                 });
             });
 
-            $search.on('blur', function () {
-                setTimeout(function () { $suggestionsContainer.hide(); }, 150);
+            // Handle window resize and scrolling
+            $(window).on('resize scroll', function() {
+                if ($suggestionsContainer.is(':visible')) {
+                    positionSuggestions();
+                }
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#searchForm, #suggestions-container').length) {
+                    $suggestionsContainer.empty().hide();
+                }
             });
 
             $search.on('focus', function () {
                 if ($suggestionsContainer.children().length > 0) {
+                    positionSuggestions();
                     $suggestionsContainer.show();
                 }
-            });            // Initialize tooltips with proper positioning
+            });
+
+            // Initialize tooltips with proper positioning
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl, {
@@ -192,21 +229,27 @@
     </script>
     <style>
         #suggestions-container {
-            display: none;
             background: #fff;
             border: 1px solid #ced4da;
-            border-top: none;
             border-radius: 0 0 .375rem .375rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            max-height: 200px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            max-height: 300px;
             overflow-y: auto;
+            z-index: 9999;
         }
-        #suggestions-container .list-group-item {
-            cursor: pointer;
-        }
-        #suggestions-container .list-group-item:hover,
-        #suggestions-container .list-group-item:focus {
-            background-color: #f8f9fa;
-        }
+
+            #suggestions-container .list-group {
+                margin-bottom: 0;
+            }
+
+            #suggestions-container .list-group-item {
+                cursor: pointer;
+                padding: .75rem 1rem;
+            }
+
+                #suggestions-container .list-group-item:hover,
+                #suggestions-container .list-group-item:focus {
+                    background-color: #f8f9fa;
+                }
     </style>
 }

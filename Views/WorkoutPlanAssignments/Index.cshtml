@@ -4,44 +4,78 @@
     ViewData["Title"] = "Assigned Plans";
 }
 
-<h1>Assigned Plans</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0"><i class="fas fa-clipboard-list me-2 text-primary"></i>Assigned Plans</h1>
+            <p class="text-muted lead">Manage client workout plan assignments</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>Assign New Plan
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.WorkoutPlan)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Client)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Admin)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.WorkoutPlan.Description)
-            </td>
-            <td>
-                @item?.Client?.UserName
-            </td>
-            <td>
-                @item?.Admin?.UserName
-            </td>
-            <td>
-              
-                <a asp-action="Details" asp-route-id="@item.WorkoutPlanAssignmentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.WorkoutPlanAssignmentId">Delete</a>
-            </td>
-        </tr>
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="fw-bold text-uppercase ps-4">
+                                <i class="fas fa-calendar-alt me-1 text-primary"></i>
+                                Plan
+                            </th>
+                            <th class="fw-bold text-uppercase">
+                                <i class="fas fa-user me-1 text-primary"></i>
+                                Client
+                            </th>
+                            <th class="fw-bold text-uppercase text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="border-bottom">
+                                <td class="fw-medium ps-4">
+                                    @Html.DisplayFor(modelItem => item.WorkoutPlan.Name)
+                                </td>
+                                <td>
+                                    @item?.Client?.UserName
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Details" asp-route-id="@item.WorkoutPlanAssignmentId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.WorkoutPlanAssignmentId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function() {
+            // Initialize tooltips with proper positioning
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    placement: 'top',
+                    container: 'body',
+                    boundary: 'viewport',
+                    offset: [0, 8]
+                });
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
