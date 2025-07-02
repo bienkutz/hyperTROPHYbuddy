@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Exercise Details";
+    var workoutPlanId = ViewBag.WorkoutPlanId as int?;
+    var workoutId = ViewBag.WorkoutId as int?;
 }
 
 <div class="container py-4">
@@ -57,8 +59,24 @@
         <a asp-action="Edit" asp-route-id="@Model?.ExerciseId" class="btn btn-primary">
             <i class="fas fa-edit me-2"></i>Edit
         </a>
-        <a asp-action="Index" class="btn btn-secondary ms-2">
-            <i class="fas fa-arrow-left me-2"></i>Back to List
-        </a>
+        @if (workoutId.HasValue)
+        {
+            <a asp-controller="Workouts" asp-action="Details" asp-route-id="@workoutId" class="btn btn-secondary ms-2">
+                <i class="fas fa-arrow-left me-2"></i>Back to Workout
+            </a>
+        }
+        else if (workoutPlanId.HasValue)
+        {
+            <a asp-controller="WorkoutPlans" asp-action="Details" asp-route-id="@workoutPlanId" class="btn btn-secondary ms-2">
+                <i class="fas fa-arrow-left me-2"></i>Back to Workout Plan
+            </a>
+        }
+        else
+        {
+            <a asp-action="Index" class="btn btn-secondary ms-2">
+                <i class="fas fa-arrow-left me-2"></i>Back to List
+            </a>
+        }
     </div>
 </div>
+

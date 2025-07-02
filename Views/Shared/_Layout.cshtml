@@ -56,7 +56,7 @@
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="WorkoutPlanAssignments" asp-action="Create">
+                                <a class="nav-link" asp-controller="WorkoutPlanAssignments" asp-action="Index">
                                     <i class="fas fa-tasks me-1"></i>Assign Workout Plans
                                 </a>
                             </li>
@@ -135,6 +135,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/tooltip.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

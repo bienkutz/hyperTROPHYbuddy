@@ -26,7 +26,7 @@
             }
         });
     }
-
+/*
     // Initialize tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.forEach(tooltipTriggerEl => {
@@ -59,7 +59,7 @@
             }
         });
     });
-
+    */
     // Initialize popovers
     const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     popoverTriggerList.forEach(popoverTriggerEl => {

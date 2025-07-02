@@ -48,7 +48,7 @@ namespace hyperTROPHYbuddy.Controllers
         }
 
         // GET: Exercises/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? workoutPlanId, int? workoutId)
         {
             if (id == null)
                 return NotFound();
@@ -57,6 +57,8 @@ namespace hyperTROPHYbuddy.Controllers
             if (exercise == null)
                 return NotFound();
 
+            ViewBag.WorkoutPlanId = workoutPlanId;
+            ViewBag.WorkoutId = workoutId;
             return View(exercise);
         }
 

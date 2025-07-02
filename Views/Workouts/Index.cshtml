@@ -80,13 +80,13 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a asp-action="Edit" asp-route-id="@item.WorkoutId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
+                                        <a asp-action="Edit" asp-route-id="@item.WorkoutId" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a asp-action="Details" asp-route-id="@item.WorkoutId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Details">
+                                        <a asp-action="Details" asp-route-id="@item.WorkoutId" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@item.WorkoutId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Delete">
+                                        <a asp-action="Delete" asp-route-id="@item.WorkoutId" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
@@ -171,16 +171,7 @@
                 }
             });
 
-            // Initialize tooltips with proper positioning
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, {
-                    placement: 'top',
-                    container: 'body',
-                    boundary: 'viewport',
-                    offset: [0, 8]
-                });
-            });
+            
         });
     </script>
     <style>
